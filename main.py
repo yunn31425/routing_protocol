@@ -1,3 +1,12 @@
+'''
+OLSR ad hoc routing protocol 
+RFC 3236
+only for single network interface
+'''
+
+
+
+
 from collections.abc import Callable, Iterable, Mapping
 import sys
 import socket
@@ -10,54 +19,10 @@ import subprocess
 from typing import Any
 # from numba import jit
 
-#message listening port
-PORTNUM = 14567
+from informationRepo import * 
+from forwarder import *
+from constants import *
 
-#define emission interval
-HELLO_INTERVAL = 2
-REFRESH_INTERVAL = 2
-TC_INTERVAL = 2
-MID_INTERVAL = TC_INTERVAL
-HNA_INTERVAL = TC_INTERVAL
-
-#define holding time 
-NEIGHB_HOLD_TIME = REFRESH_INTERVAL*3
-TOP_HOLD_TIME = 3*TC_INTERVAL
-DUP_HOLD_TIME = 30
-MID_HOLD_TIME = MID_INTERVAL*3
-HNA_HOLD_TIME = HNA_INTERVAL*3
-
-class InterfaceAssociation(threading.Thread):
-    def __init__(self):
-        super().__init__()
-        self.interfaceTuple = []
-        self.start()
-
-    def run(self): # 일정 시간이 지나면 tuple 삭제
-        while True:
-            for i, tuple in enumerate(self.interfaceTuple):
-                if self.checkTimeExpired(tuple[2]):
-                    self.interfaceTuple.pop(i)
-                    print(f'tuple deleted {i}')
-        
-    def addTuple(self, iface_addr, main_addr, addtime = time.time()):
-        self.interfaceTuple.append((iface_addr, main_addr, addtime))
-    
-    def delTuple(self, index):
-        self.interfaceTuple.pop(index)
-    
-    def checkTimeExpired(self, addtime):
-        if time.time() - addtime > 1: # time has to be checked 
-            return True
-        return False
-            
-        
-class informationRepo:
-    def __init__(self) -> None:
-        self.link_tuple = []
-    
-    def add_link_tuple():
-        pass
 
 class helloMessage:
     pass
@@ -87,15 +52,59 @@ if __name__ == '__main__':
         if e.errno == 98:
             print("port is already in use")
             listenSocket.close()
+        else:
+            print(e)
         exit()
         
+    # check if network mode is ad-hoc not managed
     # if (subprocess.run('iwconfig | grep Mode', shell=True, capture_output=True, text=True).stdout).split(' ')[10] == "Mode:Managed":
     #     print("change mode into ad-hoc first")
     #     exit()
     
     
     interfaceAss = InterfaceAssociation()
-
+    LinkSetTuple = LinkSet()
+    twoneighborTuple = TwoHopNeighborSet()
+    mprTuple = MPRSet()
+    mprSelector = MPRSelectorSet()
+    topolodyTuple = TopologyInfo()
+    
+    class PacketHeader:
+        pass
+    
+    class helloMessage(threading.Thread):
+        '''
+        message type : hello message
+        TTL : 1
+        VTime set by NEIGHB_HOLD_TIME
+        generated based on link set, neighbor set, MPR set 
+        '''
+        def __init__(self) -> None:
+            super().__init__()
+            self.last_emission_time = 0
+            
+        def run(self):
+            pass
+        
+        def cal_Htime_tobit(self):
+            pass
+        
+        def cal_Htime_todigit(self):
+            pass
+        
+        def packMessage(self, ):
+            packet_format = ''
+            packed_data = struct.pack(packet_format,
+                                      RESERVED,             # 0
+                                      NEIGHB_HOLD_TIME,     # Htime
+                                      WILL_DEFAULT,         # willingness default
+                                      )
+        
+        def unpackMessage(self):
+            pass
+        
+        
+    
         
     
     

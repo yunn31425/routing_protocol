@@ -1,0 +1,49 @@
+#message listening port
+PORTNUM = 14567
+
+#define emission interval
+HELLO_INTERVAL = 2
+REFRESH_INTERVAL = 2
+TC_INTERVAL = 2
+MID_INTERVAL = TC_INTERVAL
+HNA_INTERVAL = TC_INTERVAL
+
+#define holding time 
+NEIGHB_HOLD_TIME = REFRESH_INTERVAL*3
+TOP_HOLD_TIME = 3*TC_INTERVAL
+DUP_HOLD_TIME = 30
+MID_HOLD_TIME = MID_INTERVAL*3
+HNA_HOLD_TIME = HNA_INTERVAL*3
+
+#hello message
+
+RESERVED = 0
+
+# message willingness
+WILL_NEVER = 0
+WILL_LOW = 1
+WILL_DEFAULT = 3
+WILL_HIGH = 6
+WILL_ALWAYS = 7
+
+# link types
+
+
+# neigbor types
+
+# message types
+HELLO_MESSAGE = 1
+TC_MESSAGE = 2
+MID_MESSAGE = 3
+HNA_MESSAGE = 4
+
+#link types
+UNSPEC_LINK = 0
+ASYM_LINK = 1
+SYM_LINK = 2
+LOST_LINK = 3
+
+# Neighbor types
+NOT_NEIGH = 0
+SYM_NEIGH = 1
+MPR_NEIGH = 2
