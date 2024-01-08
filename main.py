@@ -92,13 +92,21 @@ if __name__ == '__main__':
         def cal_Htime_todigit(self):
             pass
         
-        def packMessage(self, ):
+        def packMessage(self, linkSet, neighborSet, MPRSet):
             packet_format = ''
             packed_data = struct.pack(packet_format,
-                                      RESERVED,             # 0
-                                      NEIGHB_HOLD_TIME,     # Htime
-                                      WILL_DEFAULT,         # willingness default
-                                      )
+                                      RESERVED,             # 0, 16bits
+                                      NEIGHB_HOLD_TIME,     # Htime 8bits
+                                      WILL_DEFAULT)         # willingness default 8bits
+            for i in range(len(linkSet)):
+                if linkSet[i].tuple.
+                link_code = 
+                packed_data += struct.pack(packet_format,
+                                           link_code,
+                                           RESERVED,
+                                           Link_message_size,
+                                           
+                                           )
         
         def unpackMessage(self):
             pass

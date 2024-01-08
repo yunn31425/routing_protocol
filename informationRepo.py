@@ -1,6 +1,8 @@
 import time
 import threading
 
+from constants import *
+
 
 class InterfaceAssociation(threading.Thread):
     def __init__(self):
@@ -27,37 +29,48 @@ class InterfaceAssociation(threading.Thread):
         return False
             
 class LinkSet(threading.Thread):
+    
+    class linkTuple:
+        def __init__(self, l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time) -> None:
+            self._l_local_iface_addr = l_local_iface_addr
+            self._l_local_iface_addr = l_local_iface_addr
+            self._l_neighbor_iface_addr = l_neighbor_iface_addr
+            self._l_SYM_time = l_SYM_time
+            self._l_ASYM_time = l_ASYM_time
+            self._l_time = l_time
+        
+        def checkExpired(self):
+            if self._l_time > time.time():
+                return False
+            
+            return True
+        
+        def getLinkType(self):
+            cur_time = time.time()
+            if self._l_SYM_time >= cur_time:
+                return SYM_LINK
+            if self._l_ASYM_time >= cur_time:
+                return ASYM_LINK
+            return LOST_LINK
+            
     def __init__(self):
         super().__init__()
-        self.linkSetTuple = []
+        self.tuple = [] #tuple
         self.start()
 
     def run(self): # 일정 시간이 지나면 tuple 삭제
         while True:
-            for i, tuple in enumerate(self.linkSetTuple):
-                if self.checkTimeExpired(tuple[-1]):
-                    self.linkSetTuple.pop(i)
+            for i, tuple in enumerate(self.tuple):
+                if self.tuple.checkExpired():
+                    self.tuple.pop(i)
                     print(f'tuple deleted {i}')
         
     def addTuple(self, l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time = time.time()):
-        self.linkSetTuple.append((l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time))
+        self.tuple.append(self.linkTuple(l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time))
     
     def delTuple(self, index):
-        self.linkSetTuple.pop(index)
+        self.tuple.pop(index)
     
-    def checkTimeExpired(self, addtime):
-        if time.time() - addtime > 1: # time has to be checked 
-            return True
-        return False
-    
-    def checkLinkStatus(self, index):
-        if self.linkSetTuple[index][2] > time.time():
-            return 'symmetric'
-        elif self.linkSetTuple[index][3] > time.time():
-            return 'asymmetric'
-        else:
-            return 'lost'
-        
 class NeighborSet:
     def __init__(self):
         super().__init__()
