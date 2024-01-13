@@ -28,6 +28,12 @@ from constants import *
 
 if __name__ == '__main__':
     
+    nodeLogger = logging.getLogger("node")
+    nodeLogger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler = logging.FileHandler('olsr.log')
+    nodeLogger.addHandler(file_handler)
+    
     # if len(sys.argv) == 1:
     #     print("enter network interface name")
     #     exit()
@@ -76,22 +82,32 @@ if __name__ == '__main__':
             self.interface_name = interface_name
             self.duplicated_set = DuplicatdSet()
             
+            self.enqueue_thread.start()
+            self.dequeue_thread.start()
+            
+            self.enqueue_thread.join()
+            self.dequeue_thread.join()
+            
         def enqueuing(self, packet):
-            self.packet_queue.put(packet)
+            while True:
+                self.packet_queue.put(packet)
                 
         def enqueue(self):
-            self.packet_queue
             scapy.sniff(ifaces=self.interface_name, store=False, prn=self.enqueuing)
             
         def packet_processing(self, packet):
             if struct.calcsize(packet) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
                 return
-            elif 
-              
+            seq_num, message_contents = PacketHeader().detatchHeader(packet)
+            
+            for single_msg in message_contents:
+                if 
+            
         def dequeue(self):
-            if not self.packet_queue.empty():
-                single_packet = self.packet_queue.get()
-                self.packet_processing(packet=single_packet)
+            while True:
+                if not self.packet_queue.empty():
+                    single_packet = self.packet_queue.get()
+                    self.packet_processing(packet=single_packet)
                 
             
     
@@ -141,8 +157,20 @@ if __name__ == '__main__':
                 message_header = struct.unpack_from('!BBHIBBH', binary_packet, offset=message_offset)
                 message_size = message_header[-1]
                 message = struct.unpack_from(f'I{message_size}', binary_packet, message_offset + MSG_HEADER_SIZE)
-                message_contents.append([message_header, message])
+                message_contents.append({
+                                            'message_type'      : message_header[0],
+                                            'vtime'             : message_header[1],
+                                            'message_size'      : message_header[2],
+                                            'originator_add'    : message_header[3],
+                                            'TTL'               : message_header[4],
+                                            'Hop count'         : message_header[5],
+                                            'message_seq_nun'   : message_header[6],
+                                            'message'           : message                                            
+                                        }
+                    [message_header, message])
                 message_offset += (MSG_HEADER_SIZE + message_size)
+                
+            return packet_seq_num, message_contents
             
                 
                 

@@ -48,3 +48,5 @@ NOT_SYM = 1
 # constant size of headers
 PACKET_HEADER_SIZE = 4*1
 MSG_HEADER_SIZE = 4*3
+
+MTU = 1500

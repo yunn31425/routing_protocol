@@ -185,7 +185,10 @@ class TopologyInfo(threading.Thread):
     
 class DuplicatdSet():
     '''
-    
+    maintain transmitted message 
+    to prevent transmitting the same 
+    OLSR message twice
+    (store packet data which has been processed)
     '''
     
     class duplicatedTuple:
@@ -199,6 +202,13 @@ class DuplicatdSet():
         
     def __init__(self):
         super().__init__()
+        self.dTupleList = []
+        
+    def checkExist(self, d_addr, d_seq_num):
+        pass
+    
+    def addTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):
+        self.dTupleList.append(self.duplicatedTuple(d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time))
         
     
 class TimeOutManager(threading.Thread):
