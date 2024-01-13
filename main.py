@@ -4,9 +4,6 @@ RFC 3236
 only for single network interface
 '''
 
-
-
-
 from collections.abc import Callable, Iterable, Mapping
 import sys
 import socket
@@ -16,25 +13,17 @@ from socket import *
 import threading
 import time
 import subprocess
+import fcntl
+import queue
+import gc
+
 from typing import Any
-# from numba import jit
+from scapy.all import *
+from numba import jit
 
 from informationRepo import * 
 from forwarder import *
 from constants import *
-
-
-class helloMessage:
-    pass
-
-class message:
-    pass
-
-class helloMessage(message):
-    pass
-
-class tcMessage(message):
-    pass
 
 
 if __name__ == '__main__':
@@ -53,7 +42,8 @@ if __name__ == '__main__':
             print("port is already in use")
             listenSocket.close()
         else:
-            print(e)
+            interface_info = fcntl.ioctl(listenSocket.fileno(), 0x8915, struct.pack('256s', (sys.argv[1])).encode('utf-8'))
+            ip_address = socket.inet_ntoa(struct.unpack('4s', interface_info[20:24])[0])
         exit()
         
     # check if network mode is ad-hoc not managed
@@ -61,19 +51,105 @@ if __name__ == '__main__':
     #     print("change mode into ad-hoc first")
     #     exit()
     
+    def deconde_validTime(valid_type):
+        c = 0.0625
+        if valid_type == 1:
+            valid_time = 1
+            
+        mantissa = (valid_time >> 4) & 0x0f
+        exponent = valid_time & 0x0f
+        
+        return c*(1+mantissa/16) * (2**exponent)
     
-    interfaceAss = InterfaceAssociation()
-    LinkSetTuple = LinkSet()
-    twoneighborTuple = TwoHopNeighborSet()
-    mprTuple = MPRSet()
-    mprSelector = MPRSelectorSet()
-    topolodyTuple = TopologyInfo()
+    def encode_validTime(valid_type):
+        pass #todo
+
+    class packetForwarder(threading.Thread):
+        '''
+        read packet and forward
+        '''
+        def __init__(self, interface_name):
+            super().__init__()
+            self.enqueue_thread = threading.Thread(target=self.enqueue())
+            self.dequeue_thread = threading.Thread(target=self.dequeue())
+            self.packet_queue = queue.Queue()
+            self.interface_name = interface_name
+            self.duplicated_set = DuplicatdSet()
+            
+        def enqueuing(self, packet):
+            self.packet_queue.put(packet)
+                
+        def enqueue(self):
+            self.packet_queue
+            scapy.sniff(ifaces=self.interface_name, store=False, prn=self.enqueuing)
+            
+        def packet_processing(self, packet):
+            if struct.calcsize(packet) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
+                return
+            elif 
+              
+        def dequeue(self):
+            if not self.packet_queue.empty():
+                single_packet = self.packet_queue.get()
+                self.packet_processing(packet=single_packet)
+                
+            
+    
+    
     
     class PacketHeader:
-        pass
-    
+        '''
+        packet header for olsr protocol
+        '''
+        def __init__(self, this_node_ip) -> None:
+            self.packet_seqence_num = 0
+            self.node_ip = this_node_ip
+        
+        def attatchHeader(self, message_contents):
+            packet_contents = ''
+            packet_length = 0
+            if len(message_contents) == 0:
+                return
+            for message in message_contents:
+                message_size = 0 #todo
+                packet_format = '!BBHIBBH' + f'I{message_size}'
+                packet_contents += struct.pack(packet_format,
+                                               message[0], # message_type
+                                               message[1], # vtime
+                                               message_size,
+                                               self.this_node_ip,   # originator_address
+                                               message[2], # time to live
+                                               0,                   # hop_count
+                                               message[3], # message_seq_num
+                                               message[4]) # message conents
+                packet_length += message_size + 4*3
+                
+            packet_contents = struct.pack('!HH', 
+                                          packet_length,
+                                          self.packet_seqence_num) + packet_contents
+            self.packet_seqence_num += 1
+            return packet_contents
+                
+        def detatchHeader(self, binary_packet):
+            packet_length = struct.unpack_from('!H', binary_packet, 0)
+            packet_seq_num = struct.unpack_from('!H', binary_packet, 2)
+            message_contents = []
+            message_offset = 4
+            if packet_length == 4:
+                return 
+            while packet_length - message_offset > 0:
+                message_header = struct.unpack_from('!BBHIBBH', binary_packet, offset=message_offset)
+                message_size = message_header[-1]
+                message = struct.unpack_from(f'I{message_size}', binary_packet, message_offset + MSG_HEADER_SIZE)
+                message_contents.append([message_header, message])
+                message_offset += (MSG_HEADER_SIZE + message_size)
+            
+                
+                
+            
     class helloMessage(threading.Thread):
         '''
+        hello message handler
         message type : hello message
         TTL : 1
         VTime set by NEIGHB_HOLD_TIME
@@ -92,26 +168,52 @@ if __name__ == '__main__':
         def cal_Htime_todigit(self):
             pass
         
-        def packMessage(self, linkSet, neighborSet, MPRSet):
-            packet_format = ''
+        def packMessage(self, linkSet : LinkSet, neighborSet : NeighborSet, MPRSet : MPRSet):
+            packet_format = '!HBB'
             packed_data = struct.pack(packet_format,
                                       RESERVED,             # 0, 16bits
-                                      NEIGHB_HOLD_TIME,     # Htime 8bits
+                                      NEIGHB_HOLD_TIME,     # Htime 8bits #todo mentissa
                                       WILL_DEFAULT)         # willingness default 8bits
-            for i in range(len(linkSet)):
-                if linkSet[i].tuple.
-                link_code = 
+            packet_format = '!BBHI'
+            for single_tuple in linkSet.getTuple():
+                link_code = 0
+                if MPRSet.checkExist(single_tuple._l_neighbor_iface_addr):
+                    link_code = MPR_NEIGH
+                else:
+                    link_code = neighborSet.checkExist(single_tuple._l_neighbor_iface_addr)
+                link_code = (link_code<<2) + single_tuple.getLinkType()
+                link_message_size = 32*3
                 packed_data += struct.pack(packet_format,
                                            link_code,
                                            RESERVED,
-                                           Link_message_size,
-                                           
+                                           link_message_size,
+                                           single_tuple._l_neighbor_iface_addr
                                            )
+                
+            return packed_data
         
-        def unpackMessage(self):
-            pass
+        def unpackMessage(self, packed_data):
+            size = struct.calcsize(packed_data)
+            _, Htime, will_value = map(struct.unpack_from('!HBB',packed_data, offset=0))
+            unpacked_data = [_ for _ in range((size-4)/4)]
+            for i in range((size-4)/4):
+                unpacked_data[i] = struct.unpack_from('!BBHI', packed_data, offset=4+i*4)
+                
+            return Htime, will_value, unpacked_data
         
         
+        
+    # interfaceAss = InterfaceAssociation()
+    LinkSetTuple = LinkSet()
+    neighborTuple = NeighborSet()
+    # twoneighborTuple = TwoHopNeighborSet()
+    mprTuple = MPRSet()
+    # mprSelector = MPRSelectorSet()
+    # topolodyTuple = TopologyInfo()
+    hello = helloMessage()
+    hello.packMessage(LinkSetTuple, neighborTuple, mprTuple)
+        
+            
     
         
     
