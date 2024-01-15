@@ -190,26 +190,71 @@ class DuplicatdSet():
     OLSR message twice
     (store packet data which has been processed)
     '''
-    
-    class duplicatedTuple:
-        def __init__(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):
-            self._d_addr = d_addr,                  # originator address of the message
-            self._d_seq_num = d_seq_num             # message sequence number of the message
-            self._d_retransmitted = d_retransmitted # boolean, whether the message has been retransmitted,
-            self._d_iface_list = d_iface_list       
-            # list of the addresses of the interfaces on which the message has been received
-            self._d_time = d_time                   # tuple expires and *MUST* be removed.
+    def singleTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):                    
+        return [d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time]
         
     def __init__(self):
         super().__init__()
         self.dTupleList = []
         
-    def checkExist(self, d_addr, d_seq_num):
-        pass
-    
-    def addTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):
-        self.dTupleList.append(self.duplicatedTuple(d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time))
+    def checkExist_addr_seq(self, d_addr, d_seq_num,  check_retransmit=False):
+        ptr_lower = 0
+        ptr_upper = len(self.dTupleList)-1
+        ptr_mid = 0
         
+        while ptr_lower < ptr_upper:
+            ptr_mid = round((ptr_upper + ptr_lower)/2) 
+            print(ptr_lower, ptr_mid, ptr_upper)
+            if d_seq_num == self.dTupleList[ptr_mid][1]:
+                break
+            elif d_seq_num < self.dTupleList[ptr_mid][1]:
+                ptr_upper = ptr_mid -1
+            elif d_seq_num > self.dTupleList[ptr_mid][1]:
+                ptr_lower = ptr_mid + 1
+        
+        if self.dTupleList[ptr_mid][1] == d_seq_num and \
+            self.dTupleList[ptr_mid][0] == d_addr:
+            if check_retransmit:
+                if self.dTupleList[ptr_mid][2] == False:
+                    pass
+            else:
+                return ptr_mid
+        return False
+    
+    def checkExist_iface(self, ip_address, check_retransmit=False):
+        ptr_lower = 0
+        ptr_upper = len(self.dTupleList)-1
+        ptr_mid = 0
+        
+        while ptr_lower < ptr_upper:
+            ptr_mid = round((ptr_upper + ptr_lower)/2) 
+            print(ptr_lower, ptr_mid, ptr_upper)
+            if ip_address == self.dTupleList[ptr_mid][3]:
+                break
+            elif ip_address < self.dTupleList[ptr_mid][3]:
+                ptr_upper = ptr_mid -1
+            elif ip_address > self.dTupleList[ptr_mid][3]:
+                ptr_lower = ptr_mid + 1
+        
+        if self.dTupleList[ptr_mid][3] == ip_address:
+            if check_retransmit:
+                if self.dTupleList[ptr_mid][2] == False:
+                    return ptr_mid
+            else:
+                return ptr_mid
+        return False
+                
+    def addTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):
+        self.dTupleList.append(self.singleTuple(d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time))
+        self.dTupleList.sort(key=lambda x: x[1])
+        
+    def updateTuple(self, ptr, new_time, dest_addr, retransmit):
+        original = self.dTupleList[ptr] 
+        original[4] = new_time
+        original[3].append(dest_addr)
+        original[2] = retransmit
+        self.dTupleList[ptr] = original 
+        self.dTupleList.sort(key=lambda x: x[1])
     
 class TimeOutManager(threading.Thread):
     '''
@@ -220,3 +265,16 @@ class TimeOutManager(threading.Thread):
         
     def run(self):
         pass
+     
+# processing : using the content of the messages
+# forwarding : retransmitting the same message
+
+
+class LocationSet():
+    def __init__(self) -> None:
+        pass
+    def addTuple(self):
+        pass
+    def updateTuple(self):
+        pass
+    

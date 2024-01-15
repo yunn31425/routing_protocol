@@ -37,11 +37,15 @@ if __name__ == '__main__':
     # if len(sys.argv) == 1:
     #     print("enter network interface name")
     #     exit()
-
+    
+    #todo 소켓 리셋 sender에 넣기 -> broadcaster가 아니라
+    
     try:
         listenSocket = socket(AF_INET, SOCK_STREAM)
-        listenSocket.bind(('', PORTNUM))
+        listenSocket.bind(('', PORTNUM_SEND))
         listenSocket.listen()
+        listenSocket.close()
+        listenSocket.bind(('', PORTNUM_RECV))
 
     except OSError as e:
         if e.errno == 98:
@@ -70,23 +74,42 @@ if __name__ == '__main__':
     def encode_validTime(valid_type):
         pass #todo
 
+    class Sender:
+        def __init__(self) -> None:
+            pass
+        
+    
+    
     class packetForwarder(threading.Thread):
         '''
-        read packet and forward
+        read packet and forward packet
         '''
         def __init__(self, interface_name):
             super().__init__()
             self.enqueue_thread = threading.Thread(target=self.enqueue())
             self.dequeue_thread = threading.Thread(target=self.dequeue())
+            self.transmit_thread = threading.Thread(target=self.transmit())
+            
+            self.mprSet = MPRSet()
+            self.neighbor_set = NeighborSet()
+            
             self.packet_queue = queue.Queue()
+            self.transmit_queue = queue.Queue()
+            
             self.interface_name = interface_name
             self.duplicated_set = DuplicatdSet()
             
+            self.sender = Sender()
+            self.hello_message_handler = helloMessage()
+            
+            
             self.enqueue_thread.start()
             self.dequeue_thread.start()
+            self.transmit_thread.start()
             
             self.enqueue_thread.join()
             self.dequeue_thread.join()
+            self.transmit_thread.join()
             
         def enqueuing(self, packet):
             while True:
@@ -95,22 +118,94 @@ if __name__ == '__main__':
         def enqueue(self):
             scapy.sniff(ifaces=self.interface_name, store=False, prn=self.enqueuing)
             
-        def packet_processing(self, packet):
-            if struct.calcsize(packet) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
-                return
-            seq_num, message_contents = PacketHeader().detatchHeader(packet)
-            
-            for single_msg in message_contents:
-                if 
-            
         def dequeue(self):
             while True:
                 if not self.packet_queue.empty():
                     single_packet = self.packet_queue.get()
                     self.packet_processing(packet=single_packet)
-                
             
-    
+        def packet_processing(self, packet):
+            if struct.calcsize(packet) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
+                return
+            seq_num, message_contents = PacketHeader().detatchHeader(packet)
+            source_addr = packet[scapy.IP].src
+            dest_addr = packet[scapy.IP].dest
+            for single_msg in message_contents:
+                if single_msg['ttl'] < 2:
+                    continue
+                if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], message_contents['message_seq_num']):
+                    continue # already processed message
+                else: 
+                    # process message 
+                    if single_msg['message_type'] == HELLO_MESSAGE: 
+                        self.hello_message_handler.processMessage(single_msg)
+                    elif single_msg['message_type'] == TC_MESSAGE:
+                        pass #todo
+                    elif single_msg['message_type'] == MID_MESSAGE:
+                        pass # not yet to deal with it
+                    elif single_msg['message_type'] == HNA_MESSAGE:
+                        pass # not yet to deal with it
+                    else:
+                        print('unidenfitied message type')
+                    
+                    # message  # need to be check
+                    if self.duplicated_set.checkExist_iface(ip_address) and \
+                        self.duplicated_set.checkExist_iface(dest_addr):
+                        continue # message which has been forwarded 
+                    elif single_msg['message_type'] == HELLO_MESSAGE: 
+                        self.hello_message_handler.forwardMessage(single_msg)
+                    elif single_msg['message_type'] == TC_MESSAGE:
+                        pass #todo
+                    elif single_msg['message_type'] == MID_MESSAGE:
+                        pass # not yet to deal with it
+                    elif single_msg['message_type'] == HNA_MESSAGE:
+                        pass # not yet to deal with it
+                    else: # default forwawding
+                        self.defaultForward(single_msg, source_addr, dest_addr)
+
+        def defaultForward(self, single_msg, source_addr, dest_addr):
+            if self.neighbor_set.checkExist(source_addr) != SYM:
+                return
+            else:
+                if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], \
+                    single_msg['message_seq_num'], True):
+                    if self.duplicated_set.checkExist_iface(dest_addr) is False:
+                        pass # todo message will be forwarded
+                    else:
+                        return
+                else:
+                    pass # todo message will be forwarded
+                
+            # further process for forwarding
+            will_retransmit = False
+            if self.mprSet.checkExist(source_addr) and single_msg['ttl'] > 1:
+                will_retransmit = True
+            ptr = self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num'])
+            if ptr:
+                self.duplicated_set.updateTuple(ptr, time.time() + DUP_HOLD_TIME, dest_addr, will_retransmit)
+            else:
+                self.duplicated_set.addTuple(single_msg['originator_add'], single_msg['message_seq_num'], will_retransmit,\
+                    [dest_addr], time.time() + DUP_HOLD_TIME)
+                
+            if will_retransmit:
+                single_msg['ttl'] -= 1
+                single_msg['Hop_count'] += 1
+                self.transmit_queue.put(single_msg)
+                                    
+        def transmit(self):
+            while True:
+                if not self.transmit_queue.empty():
+                    self.transmit_single(self.transmit_queue.get())
+                    
+        def transmit_single(self, single_message):
+            PacketHeader().attatchHeader(single_message)
+            pass
+        
+        def broadcastMessage(self, packed_message):
+            with socket(AF_INET, SOCK_DGRAM) as sock:
+                sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+                sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
+                
     
     
     class PacketHeader:
@@ -147,6 +242,7 @@ if __name__ == '__main__':
             return packet_contents
                 
         def detatchHeader(self, binary_packet):
+            binary_packet = binary_packet[scapy.Raw].load
             packet_length = struct.unpack_from('!H', binary_packet, 0)
             packet_seq_num = struct.unpack_from('!H', binary_packet, 2)
             message_contents = []
@@ -162,18 +258,15 @@ if __name__ == '__main__':
                                             'vtime'             : message_header[1],
                                             'message_size'      : message_header[2],
                                             'originator_add'    : message_header[3],
-                                            'TTL'               : message_header[4],
-                                            'Hop count'         : message_header[5],
-                                            'message_seq_nun'   : message_header[6],
+                                            'ttl'               : message_header[4],
+                                            'Hop_count'         : message_header[5],
+                                            'message_seq_num'   : message_header[6],
                                             'message'           : message                                            
                                         }
                     [message_header, message])
                 message_offset += (MSG_HEADER_SIZE + message_size)
                 
-            return packet_seq_num, message_contents
-            
-                
-                
+            return packet_seq_num, message_contents                
             
     class helloMessage(threading.Thread):
         '''
@@ -188,8 +281,9 @@ if __name__ == '__main__':
             self.last_emission_time = 0
             
         def run(self):
-            pass
-        
+            if self.last_emission_time - time.time() > HELLO_INTERVAL:
+                pass # broadcast
+                
         def cal_Htime_tobit(self):
             pass
         
@@ -228,7 +322,24 @@ if __name__ == '__main__':
                 unpacked_data[i] = struct.unpack_from('!BBHI', packed_data, offset=4+i*4)
                 
             return Htime, will_value, unpacked_data
+
+        def processMessage(self):
+            pass
         
+        def forwardMessage(self):
+            pass
+        
+    class TCMessage:
+        def __init__(self) -> None:
+            pass
+        def packMessage(self):
+            pass
+        def unpackMessage(self):
+            pass
+        def processMessage(self):
+            pass
+        def forwardMessage(self):
+            pass
         
         
     # interfaceAss = InterfaceAssociation()
@@ -244,5 +355,7 @@ if __name__ == '__main__':
             
     
         
+    #- HELLO-messages, performing the task of link sensing, neighbor detection and MPR signaling,
+    # - TC-messages, performing the task of topology declaration (advertisement of link states).
     
     
