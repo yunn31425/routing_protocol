@@ -1,6 +1,6 @@
 #message listening port
-PORTNUM_SEND = 24567
-PORTNUM_RECV = 24568
+PORTNUM_SEND = 14567
+PORTNUM_RECV = 14568
 
 #define emission interval
 HELLO_INTERVAL = 2

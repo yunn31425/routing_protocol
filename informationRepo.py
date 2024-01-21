@@ -45,7 +45,7 @@ class LinkSet(threading.Thread):
             
             return True
         
-        def getLinkType(self):
+        def getLinkType(self): 
             cur_time = time.time()
             if self._l_SYM_time >= cur_time:
                 return SYM_LINK
@@ -74,6 +74,18 @@ class LinkSet(threading.Thread):
     def getTuple(self):
         return self.tupleList
     
+    def checkExist(self):
+        pass # todo
+    
+    def updateTuple(self):
+        pass # todo
+    
+    def lTimeMax(self, tuple_exist):
+        pass # todo
+    
+    def checkLinkType(self, tuple_ptr):
+        return self.tupleList[tuple_ptr].getLinkType()
+    
 class NeighborSet:
     def __init__(self):
         super().__init__()
@@ -95,8 +107,20 @@ class NeighborSet:
     
     def delTuple(self, index):
         self.neighborTuple.pop(index)
+        
+    def filterWillingness(self, willingness):
+        return [node for node in self.neighborTuple if node.n_willingness == willingness]
+    
+    def getTuple(self):
+        return self.neighborTuple   
 
 class TwoHopNeighborSet(threading.Thread):
+    '''
+    n_neighbor_main_addr    : main address of a neighbor
+    n_2hop_addr             : main address of a 2-hop neighbor with 
+                            a symmetric link to N_neighbor_main_add
+    n_time                  :
+    '''
     def __init__(self):
         super().__init__()
         self.TwoneighborTuple  = []
@@ -109,7 +133,8 @@ class TwoHopNeighborSet(threading.Thread):
                     self.TwoneighborTuple .pop(i)
                     print(f'tuple deleted {i}')
         
-    def addTuple(self, n_neighbor_main_addr,n_2hop_addr, n_time = time.time()):
+    def addTuple(self, n_neighbor_main_addr, n_2hop_addr, n_time = time.time()):
+        # will replace same tuple - same n_neighbor_main_addr,n_2hop_addr
         self.TwoneighborTuple.append((n_neighbor_main_addr,n_2hop_addr, n_time))
     
     def delTuple(self, index):
@@ -119,6 +144,32 @@ class TwoHopNeighborSet(threading.Thread):
         if time.time() - addtime > 1: # time has to be checked 
             return True
         return False
+    
+    def checkSingleLink(self):
+        '''
+        return address of main addr which is only 
+        link to a 2_hop_neighbor 
+        '''
+        onlyNode = []
+        dupNode = []
+        coverNode = []
+        
+        for node in self.TwoneighborTuple:
+            if node.n_neighbor_main_addr in dupNode:
+                continue
+            if node.n_neighbor_main_addr in onlyNode:
+                onlyNode.remove(node.n_neighbor_main_addr)
+                dupNode.append(node.n_neighbor_main_addr)
+            onlyNode.append(node.n_neighbor_main_addr)
+        for node in self.TwoneighborTuple:
+            coverNode.append(node.n_2hop_addr)
+        return onlyNode, coverNode
+
+    def getTwoHopNeigh(self):
+        return [node[1] for node in self.TwoneighborTuple]
+    
+    def delTuple(self, n_neighbor_main_addr, n_2hop_addr):
+        pass
 
 class MPRSet(threading.Thread):
     def __init__(self):
@@ -182,6 +233,18 @@ class TopologyInfo(threading.Thread):
         if time.time() - addtime > 1: # time has to be checked 
             return True
         return False
+    
+    def checkExist(self, t_last_addr, t_seq):
+        # t_seq 보다 크면 현재거 무시하고 작으면 삭제 
+        pass # todo
+    
+    def getTupleLastAddr(self, t_last_addr):
+        # 주소에 해당하는 ansn 반환
+        return ansn
+    
+    def updateTuple(self, idx, t_dest_addr, t_last_addr, t_seq, t_time):
+        
+    
     
 class DuplicatdSet():
     '''

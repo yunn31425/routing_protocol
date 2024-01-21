@@ -6,10 +6,9 @@ only for single network interface
 
 from collections.abc import Callable, Iterable, Mapping
 import sys
-import socket
 import logging 
 import struct
-from socket import *
+import socket
 import threading
 import time
 import subprocess
@@ -18,7 +17,7 @@ import queue
 import gc
 
 from typing import Any
-from scapy.all import *
+from scapy.all import*  
 from numba import jit
 
 from informationRepo import * 
@@ -38,13 +37,14 @@ if __name__ == '__main__':
     #     print("enter network interface name")
     #     exit()
     
-    #todo 소켓 리셋 sender에 넣기 -> broadcaster가 아니라
+    #todo 소켓 리셋 sender에 넣기 -> broadcaste r가 아니라
     
     try:
-        listenSocket = socket(AF_INET, SOCK_STREAM)
+        listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         listenSocket.bind(('', PORTNUM_SEND))
         listenSocket.listen()
         listenSocket.close()
+        listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         listenSocket.bind(('', PORTNUM_RECV))
 
     except OSError as e:
@@ -86,23 +86,30 @@ if __name__ == '__main__':
         '''
         def __init__(self, interface_name):
             super().__init__()
-            self.enqueue_thread = threading.Thread(target=self.enqueue())
-            self.dequeue_thread = threading.Thread(target=self.dequeue())
-            self.transmit_thread = threading.Thread(target=self.transmit())
-            
+
             self.mprSet = MPRSet()
             self.neighbor_set = NeighborSet()
+            self.link_set = LinkSet()
+            self.two_hop_neighbor_set = TwoHopNeighborSet()
+            self.duplicated_set = DuplicatdSet()
+            self.mprSelector_set = MPRSelectorSet()
+            self.topology_set  = TopologyInfo()
             
             self.packet_queue = queue.Queue()
             self.transmit_queue = queue.Queue()
             
-            self.interface_name = interface_name
-            self.duplicated_set = DuplicatdSet()
+            self.interface_name = interface_name            
             
             self.sender = Sender()
-            self.hello_message_handler = helloMessage()
             
+            self.hello_message_handler = helloMessage(self)    
+            self.packet_header_handler = PacketHeader()
+            self.tc_message_handler = TCMessage(self)
             
+            self.enqueue_thread = threading.Thread(target=self.enqueue())
+            self.dequeue_thread = threading.Thread(target=self.dequeue())
+            self.transmit_thread = threading.Thread(target=self.transmit())
+                    
             self.enqueue_thread.start()
             self.dequeue_thread.start()
             self.transmit_thread.start()
@@ -116,7 +123,7 @@ if __name__ == '__main__':
                 self.packet_queue.put(packet)
                 
         def enqueue(self):
-            scapy.sniff(ifaces=self.interface_name, store=False, prn=self.enqueuing)
+            sniff(iface=self.interface_name, store=False, prn=self.enqueuing)
             
         def dequeue(self):
             while True:
@@ -131,16 +138,16 @@ if __name__ == '__main__':
             source_addr = packet[scapy.IP].src
             dest_addr = packet[scapy.IP].dest
             for single_msg in message_contents:
-                if single_msg['ttl'] < 2:
-                    continue
+                if single_msg['ttl'] < 2: # need to be checked
+                    continue 
                 if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], message_contents['message_seq_num']):
                     continue # already processed message
-                else: 
+                else:  
                     # process message 
                     if single_msg['message_type'] == HELLO_MESSAGE: 
-                        self.hello_message_handler.processMessage(single_msg)
+                        self.hello_message_handler.processMessage(single_msg, source_addr)
                     elif single_msg['message_type'] == TC_MESSAGE:
-                        pass #todo
+                        self.tc_message_handler.processMessage(single_msg, source_addr)
                     elif single_msg['message_type'] == MID_MESSAGE:
                         pass # not yet to deal with it
                     elif single_msg['message_type'] == HNA_MESSAGE:
@@ -155,7 +162,7 @@ if __name__ == '__main__':
                     elif single_msg['message_type'] == HELLO_MESSAGE: 
                         self.hello_message_handler.forwardMessage(single_msg)
                     elif single_msg['message_type'] == TC_MESSAGE:
-                        pass #todo
+                        self.defaultForward(single_msg, source_addr, dest_addr)
                     elif single_msg['message_type'] == MID_MESSAGE:
                         pass # not yet to deal with it
                     elif single_msg['message_type'] == HNA_MESSAGE:
@@ -202,12 +209,10 @@ if __name__ == '__main__':
             pass
         
         def broadcastMessage(self, packed_message):
-            with socket(AF_INET, SOCK_DGRAM) as sock:
-                sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+            with socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
                 sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
                 
-    
-    
     class PacketHeader:
         '''
         packet header for olsr protocol
@@ -262,8 +267,7 @@ if __name__ == '__main__':
                                             'Hop_count'         : message_header[5],
                                             'message_seq_num'   : message_header[6],
                                             'message'           : message                                            
-                                        }
-                    [message_header, message])
+                                        })
                 message_offset += (MSG_HEADER_SIZE + message_size)
                 
             return packet_seq_num, message_contents                
@@ -275,14 +279,18 @@ if __name__ == '__main__':
         TTL : 1
         VTime set by NEIGHB_HOLD_TIME
         generated based on link set, neighbor set, MPR set 
+        
+        never be forwarded or recoreded to duplicated set
         '''
-        def __init__(self) -> None:
+        def __init__(self, parent) -> None:
             super().__init__()
             self.last_emission_time = 0
+            self.parent = parent
             
         def run(self):
             if self.last_emission_time - time.time() > HELLO_INTERVAL:
-                pass # broadcast
+                self.packMessage()
+                self.last_emission_time = time.time()
                 
         def cal_Htime_tobit(self):
             pass
@@ -290,19 +298,24 @@ if __name__ == '__main__':
         def cal_Htime_todigit(self):
             pass
         
-        def packMessage(self, linkSet : LinkSet, neighborSet : NeighborSet, MPRSet : MPRSet):
+        # todo - parent에서 상속 받아오기
+        # todo - genenration과 pack message 모호한 것 나누기
+        def packMessage(self):
+            '''
+            pack hello message
+            '''
             packet_format = '!HBB'
             packed_data = struct.pack(packet_format,
                                       RESERVED,             # 0, 16bits
-                                      NEIGHB_HOLD_TIME,     # Htime 8bits #todo mentissa
+                                      NEIGHB_HOLD_TIME,     # Htime 8bits #todo mentissa todo
                                       WILL_DEFAULT)         # willingness default 8bits
             packet_format = '!BBHI'
-            for single_tuple in linkSet.getTuple():
-                link_code = 0
-                if MPRSet.checkExist(single_tuple._l_neighbor_iface_addr):
+            for single_tuple in self.parent.link_set.getTuple():
+                link_code = NOT_NEIGH
+                if self.parent.mprSet.checkExist(single_tuple._l_neighbor_iface_addr):
                     link_code = MPR_NEIGH
                 else:
-                    link_code = neighborSet.checkExist(single_tuple._l_neighbor_iface_addr)
+                    link_code = self.parent.neighbor_set.checkExist(single_tuple._l_neighbor_iface_addr)
                 link_code = (link_code<<2) + single_tuple.getLinkType()
                 link_message_size = 32*3
                 packed_data += struct.pack(packet_format,
@@ -310,52 +323,249 @@ if __name__ == '__main__':
                                            RESERVED,
                                            link_message_size,
                                            single_tuple._l_neighbor_iface_addr
-                                           )
-                
+                                           )                
             return packed_data
         
-        def unpackMessage(self, packed_data):
+        def unpackMessage(self, packed_data): # todo :
+            '''
+            HBB : RESERVED, Htime, willingness
+            BBHI : Link Code, RESERVED, Link Message Size, Neighbor interface address...
+            '''
             size = struct.calcsize(packed_data)
             _, Htime, will_value = map(struct.unpack_from('!HBB',packed_data, offset=0))
             unpacked_data = [_ for _ in range((size-4)/4)]
             for i in range((size-4)/4):
-                unpacked_data[i] = struct.unpack_from('!BBHI', packed_data, offset=4+i*4)
+                unpacked_data[i] = list(struct.unpack_from('!BBH', packed_data, offset=3+i*4))
+                unpacked_data[i] += list(struct.unpack_from(f'I{(unpacked_data[i][2]-4)/4}', packed_data, offset= 3 + i*4 + 4)) # need to be checked
+                
                 
             return Htime, will_value, unpacked_data
 
-        def processMessage(self):
-            pass
+        def processMessage(self, single_packet, source_addr):
+            '''link_code -> neighbor type and Link type todo 
+            BBHI : (link_code, reserved, link Message size, neighbor inteface address)
+            link Tuple : (l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time)
+            '''
+            Htime, will_value, unpacked_data = self.unpackMessage(single_packet['message'])
+            
+            # process for link tuple
+            link_tuple_exist = self.parent.link_set.checkExist(source_addr)
+            if not link_tuple_exist:
+                # need to be checked ASYM_TIME value?
+                self.parent.link_set.addTuple(ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
+            else:
+                self.parent.link_set.updateTuple(link_tuple_exist, None, None, None, time.time() + single_packet['vtime'], None)
+                if ip_address == unpacked_data[4]:
+                    if unpacked_data[1] == LOST_LINK:
+                        self.parent.link_set.updateTuple(link_tuple_exist, None, None, time.time() - 1, None, None)
+                    elif unpacked_data[1] == SYM_LINK or unpacked_data[1] == ASYM_LINK:
+                        self.parent.link_set.updateTuple(link_tuple_exist, None, None, time.time() + single_packet['vtime'], None, time.time() + single_packet['vtime'] + NEIGHB_HOLD_TIME)
+                self.parent.link_set.lTimeMax(link_tuple_exist) # why?
+                
+            # process for neighbor_tuple
+            neigh_tuple_exist = self.parent.neighbor_tuple.checkExist(source_addr)
+            if neigh_tuple_exist:
+                self.parent.neighbor_tuple_update_will(neigh_tuple_exist, will_value)
+                
+            # process for 2_hop_neighbor_tuple            
+            if link_tuple_exist and self.parent.link_set.checkLinkType(link_tuple_exist) == SYM_LINK:
+                if unpacked_data[0] == SYM_NEIGH or unpacked_data[0] == MPR_NEIGH:
+                    if unpacked_data[0] == ip_address:
+                        pass #slightly discard packet
+                    else:
+                        self.parent.two_hop_neighbor_set.addTuple(source_addr, unpacked_data[4], time.time() + single_packet['vtime'])
+                
+                elif unpacked_data[0] == NOT_NEIGH:
+                    self.parent.two_hop_neighbor_set.addTuple(source_addr, unpacked_data[4])
+                else:
+                    print("undefined type")
+                
+            # process for MPR Set - calculated with MPR
+            # MPR set has to be recalculated when change occurs in SYM_NEIGH or 
+            #self.parent.mprSet
+            '''
+            self.mprSet = MPRSet()
+            self.neighbor_set = NeighborSet()
+            self.link_set = LinkSet()
+            self.two_hop_neighbor_set = TwoHopNeighborSet()
+            self.duplicated_set = DuplicatdSet()
+            '''
+            temp_mpr = self.parent.neighbor_set.filterWillingness(WILL_ALWAYS)
+            n = self.neighbor_set.getNeigh()
+            n2 = self.two_hop_neighbor_set.getTwoHopNeigh()
+            node_d = [] # D(y) for each nodes in neighbor tuple
+            for n_node in self.parent.neighbor_set.getTuple:
+                node_d.append(self.parent.two_hop_neighbor_set.calculateDegree(n_node))
+            onlyNode, coverNode = self.two_hop_neighbor_set.checkSingleLink()
+            temp_mpr += onlyNode
+            
+            n2.remove(node for node in coverNode)
+            
+            while n2:
+                reachability = {node: sum(1 for n in n2 if n not in temp_mpr) for node in n}
+
+                # 단계 4.2: N_willingness가 가장 높고 도달성이 0이 아닌 노드 선택
+                selected_node = max(n, key=lambda node: (n[node], reachability[node]))
+                temp_mpr.add(selected_node)
+
+                # MPR 세트에 의해 커버된 노드 제거
+                for neighbor in n[selected_node]:
+                    n2.discard(neighbor)     
+                    
+            self.parent.mprSet.updateMpr(temp_mpr)         
+                    
+                    
+            # process for mpr selector set
+            if unpacked_data[1] == MPR_NEIGH:
+                for msg in unpacked_data[3:]:
+                    if msg == ip_address:
+                        self.parent.mprSelector_set.addTuple(source_addr)
+                    
+            # todo : 이웃 사라짐 -> 해당 이웃에 대한 2hop 이웃 삭제, MPR selector에서 삭제, 
+            # todo : 이웃 변동시 MPR set 재계산
+            # todo : MPR set 변동시 HELLO MESSAGE 재발송
+            
+            
+            
+        def forwardMessage(self):
+            '''
+            hello message MUST never be forwarded
+            '''
+            return 
+        
+    class TCMessage(threading.Thread):
+        '''
+            packet TC message
+            -> link sensing과 neighbor detection을 통해 수집한 정보 전파
+            -> 라우팅을 위한 경로 전송
+        '''
+        def __init__(self, parent) -> None:
+            self.last_msg_trans_time = 0
+            self.last_message_sequence = 0 # 링크 추가 및 삭제시 증가 구현 todo
+            self.parent = parent
+            
+        def run(self) -> None:
+            while True:
+                if self.last_msg_trans_time - time.time() > TC_INTERVAL:
+                    self.generateMessage()
+        
+        def packMessage(self, ansn, adversized_nei_addr):
+            '''
+            TTL : 225, Vtime : TOP_HOLD_TIME
+            ANSN : Advertised Neighbor Sequence Number
+            Advertised Neighbor Main Address
+            '''
+            packed_data = struct.pack('!HH', ansn, 0)
+            for addr in adversized_nei_addr:
+                packed_data += struct.pack('!I', addr)
+                
+            return packed_data            
+
+        def unpackMessage(self, packed_data, length):
+            '''
+            ANSN, RESERVED, advertisesd main address ....
+            '''
+            ansn = struct.unpack_from('!H', packed_data, 0)
+            for i in range(length): # todo - length 고려 길이 맞추어 줄 것
+                unpacked_data += struct.unpack_from('!I', unpacked_data, i)
+                
+            return unpacked_data
+            
+        def generateMessage(self):
+            address = []
+            for addr in self.parent.neighbor_set.getTuple():
+                address.append(addr[0])
+            packed_message = self.packMessage(self.last_message_sequence, address)
+            packet_packet = self.parent.packet_header_handler(packed_message)
+            self.parent.sender(packet_packet)
         
         def forwardMessage(self):
+            '''
+            TC message must be forwarded according to the default forwarding algorithm
+            '''
             pass
+                
+        def processMessage(self, single_msg, source_addr):
+            '''
+            message_type, vtime, message_size, originator_add, ttl, Hop_count, message_seq_num, message
+            '''
+            ansn, neighbor_addrsss = self.unpackMessage(single_msg['message'], single_msg['message_size']) # todo 메세지 사이즈 부적확
+            if self.parent.link_set.getLinkType(source_addr) != SYM_LINK:
+                return
+            
+            t_seq = self.parent.topology_set.getTupleAddr(source_addr)
+
+            if t_seq > ansn:
+                return
+            elif t_seq < ansn:
+                self.parent.topology_set.delTuple(source_addr)
+
+            for addr in neighbor_addrsss:
+                addr_idx = self.parent.topology_set.findTuple(addr, source_addr)
+                if addr_idx:
+                    self.parent.topology_set.updateTuple(addr_idx, None, None, None, time.time() + single_msg['vtime'])
+                else:
+                    self.parent.topology_set.addTuple(addr, source_addr, ansn, time.time() + single_msg['vtime'])
+
         
-    class TCMessage:
+    # interfaceAss = InterfaceAssociation()
+    #LinkSetTuple = LinkSet()
+    #neighborTuple = NeighborSet()
+    # twoneighborTuple = TwoHopNeighborSet()
+    #mprTuple = MPRSet()
+    # mprSelector = MPRSelectorSet()
+    # topolodyTuple = TopologyInfo()
+    #hello = helloMessage()
+    #hello.packMessage(LinkSetTuple, neighborTuple, mprTuple)
+        
+    #- HELLO-messages, performing the task of link sensing, neighbor detection and MPR signaling,
+    # - TC-messages, performing the task of topology declaration (advertisement of link states).
+    
+    
+    # neighbor set : creaton : detect link, update : link change, removal : link deleted
+    
+    forwarder = packetForwarder('wlp1s0')
+    
+    class MoveMessage(threading.Thread):
+        '''
+        soruce : monitor current node movement ->
+        soruce : send message to one hop neighbor ->
+        neighbor : compare it with its location ->
+        neighbor :send back if they are coming close ->
+        source : select neighbor to be connect and broadcast ->
+        all nodes : change its routing table element of moving node
+        '''
+        
         def __init__(self) -> None:
             pass
         def packMessage(self):
             pass
         def unpackMessage(self):
             pass
-        def processMessage(self):
+        
+    class RoutechangeMessage(threading.Thread):
+        '''
+        soruce : monitor current node movement ->
+        soruce : send message to one hop neighbor ->
+        neighbor : compare it with its location ->
+        neighbor :send back if they are coming close ->
+        source : select neighbor to be connect and broadcast ->
+        all nodes : change its routing table element of moving node
+        '''
+        
+        def __init__(self) -> None:
             pass
-        def forwardMessage(self):
+        def packMessage(self):
+            pass
+        def unpackMessage(self):
+            pass
+        
+    # Routing configuration    
+    # data packet forwarding
+    
+    class RoutingTableManager:
+        def __init__(self) -> None:
             pass
         
         
-    # interfaceAss = InterfaceAssociation()
-    LinkSetTuple = LinkSet()
-    neighborTuple = NeighborSet()
-    # twoneighborTuple = TwoHopNeighborSet()
-    mprTuple = MPRSet()
-    # mprSelector = MPRSelectorSet()
-    # topolodyTuple = TopologyInfo()
-    hello = helloMessage()
-    hello.packMessage(LinkSetTuple, neighborTuple, mprTuple)
-        
-            
-    
-        
-    #- HELLO-messages, performing the task of link sensing, neighbor detection and MPR signaling,
-    # - TC-messages, performing the task of topology declaration (advertisement of link states).
-    
     
