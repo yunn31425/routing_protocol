@@ -78,8 +78,6 @@ if __name__ == '__main__':
         def __init__(self) -> None:
             pass
         
-    
-    
     class packetForwarder(threading.Thread):
         '''
         read packet and forward packet
@@ -94,6 +92,7 @@ if __name__ == '__main__':
             self.duplicated_set = DuplicatdSet()
             self.mprSelector_set = MPRSelectorSet()
             self.topology_set  = TopologyInfo()
+            self.route_table = RouteTable()
             
             self.packet_queue = queue.Queue()
             self.transmit_queue = queue.Queue()
@@ -425,8 +424,6 @@ if __name__ == '__main__':
             # todo : 이웃 변동시 MPR set 재계산
             # todo : MPR set 변동시 HELLO MESSAGE 재발송
             
-            
-            
         def forwardMessage(self):
             '''
             hello message MUST never be forwarded
@@ -564,8 +561,23 @@ if __name__ == '__main__':
     # data packet forwarding
     
     class RoutingTableManager:
-        def __init__(self) -> None:
-            pass
+        def __init__(self, parent) -> None:
+            self.parent = parent
         
-        
-    
+        def calculateRoute(self):
+            #1
+            self.parent.route_table.resetTuple()
+            #2
+            for neighbor in self.parent.neighbor_set.getTuple():
+                if neighbor[1] == SYM:                    
+                    link_tuple = self.parent.link_set.getTuple(neighbor[0])
+                    if link_tuple:
+                        self.parent.route_table.addTuple(link_tuple[1], link_tuple[1], 1, link_tuple[0])
+                    else:
+                        self.parent.route_table.addTuple(neighbor[0], link_tuple[1], 1, link_tuple[0])
+            #3          
+            for twoNeighbor in self.parent.two_hop_neighbor_set.getTuple():
+                if self.parent.neighbor_set.checkwill(twoNeighbor) != WILL_NEVER:
+                    self.parent.route_table.addTuple(twoNeighbor[1], twoNeighbor[0], 2, link_tuple[0])
+            #4 - find route to hop count h+1 (h start from 2)
+                              

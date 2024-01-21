@@ -105,6 +105,13 @@ class NeighborSet:
             
         return UNSPEC_LINK
     
+    def checkwill(self, addr):
+        for i in self.neighborTuple:
+            if i[0] == addr:
+                return i[2]
+            
+        return
+    
     def delTuple(self, index):
         self.neighborTuple.pop(index)
         
@@ -139,6 +146,9 @@ class TwoHopNeighborSet(threading.Thread):
     
     def delTuple(self, index):
         self.TwoneighborTuple.pop(index)
+        
+    def getTuple(self):
+        return self.TwoneighborTuple
     
     def checkTimeExpired(self, addtime):
         if time.time() - addtime > 1: # time has to be checked 
@@ -233,17 +243,16 @@ class TopologyInfo(threading.Thread):
         if time.time() - addtime > 1: # time has to be checked 
             return True
         return False
-    
-    def checkExist(self, t_last_addr, t_seq):
-        # t_seq 보다 크면 현재거 무시하고 작으면 삭제 
-        pass # todo
-    
+
     def getTupleLastAddr(self, t_last_addr):
         # 주소에 해당하는 ansn 반환
         return ansn
     
     def updateTuple(self, idx, t_dest_addr, t_last_addr, t_seq, t_time):
-        
+        pass
+    
+    def findTuple(self, t_dest_addr, t_last_addr, t_seq, t_time):\
+        pass # none 제외 해당 조건 있으면 tuple 찾기
     
     
 class DuplicatdSet():
@@ -341,3 +350,19 @@ class LocationSet():
     def updateTuple(self):
         pass
     
+    
+class RouteTable:
+    def __init__(self) -> None:
+        self.route_table = []
+    
+    def addTuple(self, R_dest_addr, R_next_addr, R_dist, R_iface_addr):
+        '''
+        R_dest_addr : destination addr
+        R_next_addr : next to be reach to dest
+        R_dist : hops to be reached to dest
+        R_iface_addr : interface that link exist to destination
+        '''
+        self.route_table.append(R_dest_addr, R_next_addr, R_dist, R_iface_addr)
+        
+    def resetTuple(self):
+        self.route_table = []
