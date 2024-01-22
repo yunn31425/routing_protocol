@@ -45,7 +45,11 @@ def encode_validTime(emission_interval):
 
 class Sender:
     '''
-    todo 소켓 리셋 sender에 넣기 -> broadcaste r가 아니라
+    todo 소켓 리셋 sender에 넣기 -> broadcaste r가 아니라 
+    별도의 queue 꾸릴 것
+    '''
+    '''
+    send message and packets
     '''
     def __init__(self, debug=False) -> None:
         self.stauts = False
@@ -91,8 +95,11 @@ class Sender:
     def sendMessage():
         pass
     
-    def broadcastMsg():
-        pass
+    def broadcastMessage(self, packed_message):
+        # todo : sender로 옮기기
+        with socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
     
     def getIfaceName(self):
         return self.interface_name
@@ -101,16 +108,11 @@ class Sender:
         return self.ip_address
         
 class OLSRManager:
+    '''
+    send and receive olsr message to maintain route
+    and make route table
+    '''
     def __init__(self) -> None:
-        pass        
-
-class packetForwarder:
-    '''
-    read packet and forward packet
-    '''
-    def __init__(self):
-        super().__init__()
-
         self.mprSet = MPRSet()
         self.neighbor_set = NeighborSet()
         self.link_set = LinkSet()
@@ -120,56 +122,9 @@ class packetForwarder:
         self.topology_set  = TopologyInfo()
         self.route_table = RouteTable()
         
-        self.packet_queue = Queue()
-        self.transmit_queue = Queue()
-                
-        self.sender = Sender()
-        
-        self.interface_name = self.sender.getIfaceName()
-        self.ip_address = self.sender.getIPAddr()
-             
         self.hello_message_handler = helloMessage(self, self.ip_address)    
         self.packet_header_handler = PacketHeader(self.ip_address)
-        self.tc_message_handler = TCMessage(self)
-        
-        self.enqueue_process = Process(target=self.enqueue)
-        self.enqueue_process.start() 
-        
-        self.dequeue_process = Process(target=self.dequeue)
-        self.dequeue_process.start()
-               
-        self.transmit_process = Process(target=self.transmit)    
-        self.transmit_process.start()
-        
-        self.dequeue_process.join()
-        self.enqueue_process.join()
-        self.transmit_process.join()
-        
-    def enqueuing(self, packet):
-        ilayer = packet.getlayer("IP")
-        if packet.getlayer("Raw"):            
-            #print('hehe', packet[Raw].load)
-            self.packet_queue.put({
-                'payload' : packet[Raw].load,
-                'src_IP' : ilayer.src,
-                'dst_IP' : ilayer.dst
-                })
-            #print(packet.summary(), 'dequeing', self.packet_queue.qsize())
-            
-    async def async_sniff(self):
-        sniff(iface=self.interface_name, store=False, prn=self.enqueuing)
-        
-    def enqueue(self):
-        asyncio.run(self.async_sniff())
-        # while True:
-        #     print(sniff(iface=self.interface_name, store=False,prn=self.enqueuing, timeout=None))
-        
-    def dequeue(self):
-        while True:
-            if not self.packet_queue.empty():                
-                single_packet = self.packet_queue.get()
-                print(single_packet['src_IP'], '>>',single_packet['dst_IP'], 'dequeing')
-                self.packet_processing(single_packet)
+        self.tc_message_handler = TCMessage(self) 
         
     def packet_processing(self, packet):
         if len(packet['payload']) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
@@ -251,11 +206,69 @@ class packetForwarder:
         PacketHeader().attatchHeader(single_message)
         pass # todo : sender로
     
-    def broadcastMessage(self, packed_message):
-        # todo : sender로 옮기기
-        with socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
+
+
+class packetForwarder:
+    '''
+    read packet and forward packet
+    '''
+    def __init__(self):
+        super().__init__()
+        
+        self.packet_queue = Queue()
+        self.transmit_queue = Queue()
+                
+        self.sender = Sender()
+        
+        self.interface_name = self.sender.getIfaceName()
+        self.ip_address = self.sender.getIPAddr()
+        
+        self.enqueue_process = Process(target=self.enqueue)
+        self.enqueue_process.start() 
+        
+        self.dequeue_process = Process(target=self.dequeue)
+        self.dequeue_process.start()
+               
+        self.transmit_process = Process(target=self.transmit)    
+        self.transmit_process.start()
+        
+        self.dequeue_process.join()
+        self.enqueue_process.join()
+        self.transmit_process.join()
+        
+    def addLogger(self, logger):
+        self.logger = logger
+        
+    def addManager(self, manager):
+        self.manager = manager
+        
+    def enqueuing(self, packet):
+        ilayer = packet.getlayer("IP")
+        if packet.getlayer("Raw"):            
+            #print('hehe', packet[Raw].load)
+            self.packet_queue.put({
+                'payload' : packet[Raw].load,
+                'src_IP' : ilayer.src,
+                'dst_IP' : ilayer.dst
+                })
+            #print(packet.summary(), 'dequeing', self.packet_queue.qsize())
+            
+    async def async_sniff(self):
+        sniff(iface=self.interface_name, store=False, prn=self.enqueuing)
+        
+    def enqueue(self):
+        asyncio.run(self.async_sniff())
+        # while True:
+        #     print(sniff(iface=self.interface_name, store=False,prn=self.enqueuing, timeout=None))
+        
+    def dequeue(self):
+        while True:
+            if not self.packet_queue.empty():                
+                single_packet = self.packet_queue.get()
+                print(single_packet['src_IP'], '>>',single_packet['dst_IP'], 'dequeing')
+                self.packet_processing(single_packet)
+        
+
             
 class PacketHeader:
     '''

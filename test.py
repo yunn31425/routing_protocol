@@ -2,7 +2,7 @@ import socket
 import struct
 from time import *
 
-def send_udp_packet(destination_ip, destination_port, message):
+def send_udp_packet(cnt, destination_ip, destination_port, message):
     # Create a UDP socket
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -12,7 +12,7 @@ def send_udp_packet(destination_ip, destination_port, message):
     try:
         # Send the UDP packet
         udp_socket.sendto(message.encode('utf-8'), dest_address)
-        print(f"UDP packet sent to {destination_ip}:{destination_port}: {message}")
+        print(f"{cnt} UDP packet sent to {destination_ip}:{destination_port}: {message}")
 
     finally:
         # Close the socket
@@ -78,6 +78,6 @@ if __name__ == "__main__":
     # Call the function to send the UDP packet
     while True:
         
-        send_udp_packet(dest_ip, dest_port, combined_header.hex())
-        cnt += 1
+        send_udp_packet(cnt, dest_ip, dest_port, combined_header.hex())
+        cnt = (cnt+1)%2
         sleep(1)
