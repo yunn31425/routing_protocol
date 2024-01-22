@@ -5,11 +5,11 @@ from typing import Any
 
 from constants import *
 
-class InterfaceAssociation(threading.Thread):
+class InterfaceAssociation:
     def __init__(self):
         super().__init__()
         self.interfaceTuple = []
-        self.start()
+        
 
     def run(self): # 일정 시간이 지나면 tuple 삭제
         while True:
@@ -29,7 +29,7 @@ class InterfaceAssociation(threading.Thread):
             return True
         return False
             
-class LinkSet(threading.Thread):
+class LinkSet:
     
     class linkTuple:
         def __init__(self, l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time) -> None:
@@ -56,7 +56,7 @@ class LinkSet(threading.Thread):
     def __init__(self):
         super().__init__()
         self.tupleList = [] #linkSetTuple
-        # self.start()
+        # 
 
     def run(self): # 일정 시간이 지나면 tuple 삭제
         while True:
@@ -121,7 +121,7 @@ class NeighborSet:
     def getTuple(self):
         return self.neighborTuple   
 
-class TwoHopNeighborSet(threading.Thread):
+class TwoHopNeighborSet:
     '''
     n_neighbor_main_addr    : main address of a neighbor
     n_2hop_addr             : main address of a 2-hop neighbor with 
@@ -131,7 +131,7 @@ class TwoHopNeighborSet(threading.Thread):
     def __init__(self):
         super().__init__()
         self.TwoneighborTuple  = []
-        self.start()
+        
 
     def run(self): # 일정 시간이 지나면 tuple 삭제
         while True:
@@ -181,11 +181,11 @@ class TwoHopNeighborSet(threading.Thread):
     def delTuple(self, n_neighbor_main_addr, n_2hop_addr):
         pass
 
-class MPRSet(threading.Thread):
+class MPRSet:
     def __init__(self):
         super().__init__()
         self.MPRTuple = []
-        # self.start()
+        # 
 
     def addTuple(self, neighbor):
         self.MPRTuple.append(neighbor)
@@ -196,11 +196,11 @@ class MPRSet(threading.Thread):
     def delTuple(self, index):
         self.MPRTuple.pop(index)    
         
-class MPRSelectorSet(threading.Thread):
+class MPRSelectorSet:
     def __init__(self):
         super().__init__()
         self.mprSelectorTuple  = []
-        # self.start()
+        # 
 
     def run(self): # 일정 시간이 지나면 tuple 삭제
         while True:
@@ -220,11 +220,17 @@ class MPRSelectorSet(threading.Thread):
             return True
         return False  
       
-class TopologyInfo(threading.Thread):
+class TopologyInfo:
+    '''
+    t_dest_addr
+    t_last_addr
+    t_seq
+    t_time
+    '''
     def __init__(self):
         super().__init__()
         self.topoloyTuple = []
-        # self.start()
+        # 
 
     def run(self): # 일정 시간이 지나면 tuple 삭제
         while True:
@@ -254,66 +260,48 @@ class TopologyInfo(threading.Thread):
     def findTuple(self, t_dest_addr, t_last_addr, t_seq, t_time):\
         pass # none 제외 해당 조건 있으면 tuple 찾기
     
+    def getTuple(self):
+        return self.topoloyTuple
     
-class DuplicatdSet():
+class DuplicatedSet():
     '''
     maintain transmitted message 
     to prevent transmitting the same 
     OLSR message twice
     (store packet data which has been processed)
+    D_addr              : originator address of the message
+    D_seq_num           : message sequence number of the message
+    D_retransmitted     : boolean indicating whether the message has been already retransmitted
+    D_iface_list        : list of the addresses of the interfaces on which the message has been received
+    D_time              : the time at which a tuple expires
     '''
     def singleTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):                    
-        return [d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time]
+        return [d_addr, d_seq_num, d_retransmitted, [d_iface_list], d_time]
         
     def __init__(self):
         super().__init__()
         self.dTupleList = []
         
-    def checkExist_addr_seq(self, d_addr, d_seq_num,  check_retransmit=False):
-        ptr_lower = 0
-        ptr_upper = len(self.dTupleList)-1
-        ptr_mid = 0
+    def checkExist_addr_seq(self, d_addr, d_seq_num, check_retransmit=False):      
+        print('dup', self.dTupleList)  
+        for i, single_tuple in enumerate(self.dTupleList):
+            if  single_tuple[0] == d_addr and single_tuple[1] == d_seq_num:
+                if check_retransmit:
+                    if single_tuple[2] == False:
+                        pass
+                else:
+                    return i
         
-        while ptr_lower < ptr_upper:
-            ptr_mid = round((ptr_upper + ptr_lower)/2) 
-            print(ptr_lower, ptr_mid, ptr_upper)
-            if d_seq_num == self.dTupleList[ptr_mid][1]:
-                break
-            elif d_seq_num < self.dTupleList[ptr_mid][1]:
-                ptr_upper = ptr_mid -1
-            elif d_seq_num > self.dTupleList[ptr_mid][1]:
-                ptr_lower = ptr_mid + 1
-        
-        if self.dTupleList[ptr_mid][1] == d_seq_num and \
-            self.dTupleList[ptr_mid][0] == d_addr:
-            if check_retransmit:
-                if self.dTupleList[ptr_mid][2] == False:
-                    pass
-            else:
-                return ptr_mid
-        return False
+        return -1
     
     def checkExist_iface(self, ip_address, check_retransmit=False):
-        ptr_lower = 0
-        ptr_upper = len(self.dTupleList)-1
-        ptr_mid = 0
-        
-        while ptr_lower < ptr_upper:
-            ptr_mid = round((ptr_upper + ptr_lower)/2) 
-            print(ptr_lower, ptr_mid, ptr_upper)
-            if ip_address == self.dTupleList[ptr_mid][3]:
-                break
-            elif ip_address < self.dTupleList[ptr_mid][3]:
-                ptr_upper = ptr_mid -1
-            elif ip_address > self.dTupleList[ptr_mid][3]:
-                ptr_lower = ptr_mid + 1
-        
-        if self.dTupleList[ptr_mid][3] == ip_address:
-            if check_retransmit:
-                if self.dTupleList[ptr_mid][2] == False:
-                    return ptr_mid
-            else:
-                return ptr_mid
+        for i, single_tuple in enumerate(self.dTupleList):
+            if  ip_address in single_tuple[3]:
+                if check_retransmit:
+                    if single_tuple[2] == False:
+                        return i                    
+                else:
+                    return i
         return False
                 
     def addTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):
@@ -321,14 +309,17 @@ class DuplicatdSet():
         self.dTupleList.sort(key=lambda x: x[1])
         
     def updateTuple(self, ptr, new_time, dest_addr, retransmit):
-        original = self.dTupleList[ptr] 
-        original[4] = new_time
-        original[3].append(dest_addr)
-        original[2] = retransmit
+        original = self.dTupleList[ptr]
+        if new_time is not None:
+            original[4] = new_time
+        if dest_addr is not None:
+            original[3].append(dest_addr)
+        if retransmit is not None:
+            original[2] = retransmit
         self.dTupleList[ptr] = original 
         self.dTupleList.sort(key=lambda x: x[1])
     
-class TimeOutManager(threading.Thread):
+class TimeOutManager:
     '''
     tour every repository and pop element that over times
     '''
@@ -336,6 +327,9 @@ class TimeOutManager(threading.Thread):
         super().__init__()
         
     def run(self):
+        pass
+    
+    def addRepository(self):
         pass
      
 # processing : using the content of the messages
@@ -362,7 +356,40 @@ class RouteTable:
         R_dist : hops to be reached to dest
         R_iface_addr : interface that link exist to destination
         '''
-        self.route_table.append(R_dest_addr, R_next_addr, R_dist, R_iface_addr)
+        self.route_table.append({
+            'R_dest_addr' : R_dest_addr,
+            'R_next_addr' : R_next_addr,
+            'R_dist' : R_dist,
+            'R_iface_addr' : R_iface_addr
+            })
         
     def resetTuple(self):
         self.route_table = []
+        
+    def checkExist(self, addr):
+        for route in self.route_table:
+            if route['R_dest_addr'] == addr:
+                return route
+            
+        return False
+        
+    def checkExistDest(self, addr):
+        for route in self.route_table:
+            if route['R_dest_addr'] == addr:
+                return route['R_dist']
+            
+        return False
+    
+    def checkExistNext(self, addr):
+        for route in self.route_table:
+            if route['R_dest_addr'] == addr:
+                return route['R_next_addr']
+            
+        return False
+    
+    
+if __name__ == '__main__':
+    # duplicated Set Test
+    
+    duplicated_set = DuplicatedSet()
+    duplicated_set.addTuple(808464432, 12337, False, ['127.0.0.1'], 1705926862.1785054)

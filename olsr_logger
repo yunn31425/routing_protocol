@@ -1,0 +1,10 @@
+
+import logging
+
+class OlsrLogger():
+    def __init__(self) -> None:        
+        self.nodeLogger = logging.getLogger("node")
+        self.nodeLogger.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        file_handler = logging.FileHandler('olsr.log')
+        self.nodeLogger.addHandler(file_handler)
