@@ -312,6 +312,7 @@ class MoveMessage():
         self.check_time_prev = 0
         self.longitude_prev = None
         self.latitude_prev = None
+        self.msg_seq_num = 0
         
         self.parent = parent
         self.logger = parent.logger
@@ -340,7 +341,8 @@ class MoveMessage():
                 if self.gps_handler.getVelocity()['velocity'] > MOVE_VELO_THRESHOLD:
                     message_contents = self.packMessage(1, self.gps_handler.getVelocity(), \
                         self.gps_handler.getCoordinate())
-                    packet_contents = self.parent.
+                    packet_contents = self.parent.attatchHeader(
+                        [MOVE_MESSAGE, 2, 2, self.msg_seq_num, message_contents])
                     self.sender.broadcastMsg() 
         
     def packMessage(self, nodeType, velocity, coordinate):

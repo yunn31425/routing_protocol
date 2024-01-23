@@ -7,7 +7,7 @@ from math import *
 
 PIXHAWK_DIRECTORY = "serial:///dev/ttyACM0"
 
-class GPSReceiver(threading.Thread):
+class GPSReceiver:
     '''
     get gps coordinate and velocity from pixhawk
     '''
@@ -15,7 +15,7 @@ class GPSReceiver(threading.Thread):
         super().__init__()
         self.gps_available = False
         self.drone = None
-        asyncio.run(self.init_connection)
+        asyncio.run(self.init_connection())
         self.init_connection()
         self.position = None
         
@@ -57,18 +57,3 @@ class GPSReceiver(threading.Thread):
         
     def status(self):
         return self.status
-        
-class MoveMessage():
-    def __init__(self) -> None:
-        pass
-    
-    def pack(self):
-        pass
-    
-    def unpack(self):
-        pass
-     
-        
-
-        
-        
