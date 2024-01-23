@@ -1,0 +1,148 @@
+2024-01-23 10:47:55,043 - node - INFO - init complete. addr : 127.0.0.1
+2024-01-23 10:47:55,691 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:55,692 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:56,688 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:56,689 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:57,689 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:57,690 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:58,689 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:58,690 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:59,690 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:47:59,691 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:00,692 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:00,693 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:01,692 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:01,694 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:02,693 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:02,694 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:03,694 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:03,696 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:04,695 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:04,697 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:05,696 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:05,707 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:06,697 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:06,698 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:07,698 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:07,700 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:08,699 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:08,700 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:09,700 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:09,701 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:10,701 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:10,702 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:11,702 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:11,703 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:12,703 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:12,704 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:13,704 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:13,705 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:14,705 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:14,706 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:15,706 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:15,707 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:16,708 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:16,713 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:16,802 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,803 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,804 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,806 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,853 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,854 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,855 - node - WARNING - packet with out Raw
+2024-01-23 10:48:16,856 - node - WARNING - packet with out Raw
+2024-01-23 10:48:17,710 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:17,711 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:18,709 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:18,711 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:19,709 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:19,710 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:20,710 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:20,711 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:21,712 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:21,714 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:22,712 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:22,714 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:23,713 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:23,714 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:24,714 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:24,715 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:25,715 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:25,718 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:26,717 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:26,718 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:27,717 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:27,719 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:28,718 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:28,720 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:29,719 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:29,720 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:30,720 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:30,721 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:31,721 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:31,722 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:32,722 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:32,724 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:33,723 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:33,724 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:34,723 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:34,725 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:35,724 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:35,726 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:36,725 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:36,726 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:37,726 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:37,737 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:37,759 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,760 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,761 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,763 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,820 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,822 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,824 - node - WARNING - packet with out Raw
+2024-01-23 10:48:37,827 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,703 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,703 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,704 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,705 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,706 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,706 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,709 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,710 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,715 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,716 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,717 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,718 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,719 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,720 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,721 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,722 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,728 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:38,730 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:38,987 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,988 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,989 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,989 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,990 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,991 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,993 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,994 - node - WARNING - packet with out Raw
+2024-01-23 10:48:38,996 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,012 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,029 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,030 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,030 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,031 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,031 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,032 - node - WARNING - packet with out Raw
+2024-01-23 10:48:39,728 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:39,730 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:40,729 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:40,731 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:41,731 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:41,733 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:42,732 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:42,734 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:43,733 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:43,735 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:48:44,455 - node - INFO - keyboard interrupt

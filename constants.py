@@ -32,6 +32,9 @@ TC_MESSAGE = 2
 MID_MESSAGE = 3
 HNA_MESSAGE = 4
 
+MOVE_MESSAGE = 5
+RECALC_MESSAGE = 6
+
 #link types
 UNSPEC_LINK = 0 # no specific information about the links
 ASYM_LINK = 1   # links are asymmetric

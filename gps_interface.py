@@ -10,7 +10,6 @@ class GPSReceiver(threading.Thread):
     '''
     get gps coordinate and velocity from pixhawk
     '''
-    
     def __init__(self):
         super().__init__()
         self.gps_available = False
@@ -43,6 +42,17 @@ class GPSReceiver(threading.Thread):
                 self.velocicy['down_m_s']]
         else:
             return
+        
+class MoveMessage():
+    def __init__(self) -> None:
+        pass
+    
+    def pack(self):
+        pass
+    
+    def unpack(self):
+        pass
+     
         
 
         

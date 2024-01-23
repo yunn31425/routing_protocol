@@ -2,21 +2,19 @@ from collections.abc import Callable, Iterable, Mapping
 import time
 import threading
 from typing import Any
-
+import asyncio
 from constants import *
 
 class InterfaceAssociation:
     def __init__(self):
         super().__init__()
         self.interfaceTuple = []
-        
 
-    def run(self): # 일정 시간이 지나면 tuple 삭제
-        while True:
-            for i, tuple in enumerate(self.interfaceTuple):
-                if self.checkTimeExpired(tuple[-1]):
-                    self.interfaceTuple.pop(i)
-                    print(f'tuple deleted {i}')
+    async def run(self): # 일정 시간이 지나면 tuple 삭제
+        for i, tuple in enumerate(self.interfaceTuple):
+            if self.checkTimeExpired(tuple[-1]):
+                self.interfaceTuple.pop(i)
+                print(f'tuple deleted {i}')
         
     def addTuple(self, i_iface_addr, i_main_addr, i_addtime = time.time()):
         self.interfaceTuple.append((i_iface_addr, i_main_addr, i_addtime))
@@ -29,8 +27,7 @@ class InterfaceAssociation:
             return True
         return False
             
-class LinkSet:
-    
+class LinkSet:    
     class linkTuple:
         def __init__(self, l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time) -> None:
             self._l_local_iface_addr = l_local_iface_addr
@@ -52,18 +49,19 @@ class LinkSet:
             if self._l_ASYM_time >= cur_time:
                 return ASYM_LINK
             return LOST_LINK
+        
+        def getNeighAddr(self):
+            return self._l_neighbor_iface_addr
             
     def __init__(self):
         super().__init__()
         self.tupleList = [] #linkSetTuple
-        # 
-
-    def run(self): # 일정 시간이 지나면 tuple 삭제
-        while True:
-            for i, tuple in enumerate(self.tuple):
-                if self.tupleList.checkExpired():
-                    self.tupleList.pop(i)
-                    print(f'tuple deleted {i}')
+        
+    async def run(self): # 일정 시간이 지나면 tuple 삭제
+        for i, tuple in enumerate(self.tuple):
+            if self.tupleList.checkExpired():
+                self.tupleList.pop(i)
+                print(f'tuple deleted {i}')
         
     def addTuple(self, l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time = time.time()):
         self.tupleList.append(self.linkTuple(l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time))
@@ -74,14 +72,26 @@ class LinkSet:
     def getTuple(self):
         return self.tupleList
     
-    def checkExist(self):
-        pass # todo
+    def checkExist(self, source_addr):
+        for i, single_tuple in enumerate(self.tupleList):
+            if single_tuple.getNeighAddr() == source_addr:
+                return i
+            
+        return False
     
-    def updateTuple(self):
-        pass # todo
+    def updateTuple(self, idx, l_local_iface_addr=None, l_neighbor_iface_addr=None, \
+        l_SYM_time=None, l_ASYM_time=None, l_time=None):
+        original = self.tupleList[idx]
+        self.tupleList[idx] = [
+            l_local_iface_addr if l_local_iface_addr is not None else original[0],
+            l_neighbor_iface_addr if l_neighbor_iface_addr is not None else original[1],
+            l_SYM_time if l_SYM_time is not None else original[2],
+            l_ASYM_time if l_ASYM_time is not None else original[3],
+            l_time if l_time is not None else original[4]     
+        ]
     
-    def lTimeMax(self, tuple_exist):
-        pass # todo
+    def lTimeMax(self, idx):
+        self.tupleList[idx][4] = max(self.tupleList[idx][4], self.tupleList[idx][3])
     
     def checkLinkType(self, tuple_ptr):
         return self.tupleList[tuple_ptr].getLinkType()
@@ -120,6 +130,9 @@ class NeighborSet:
     
     def getTuple(self):
         return self.neighborTuple   
+    
+    def getNeigh(self):
+        return [single_tuple[0] for single_tuple in self.neighborTuple]
 
 class TwoHopNeighborSet:
     '''
@@ -133,12 +146,11 @@ class TwoHopNeighborSet:
         self.TwoneighborTuple  = []
         
 
-    def run(self): # 일정 시간이 지나면 tuple 삭제
-        while True:
-            for i, tuple in enumerate(self.TwoneighborTuple):
-                if self.checkTimeExpired(tuple[-1]):
-                    self.TwoneighborTuple .pop(i)
-                    print(f'tuple deleted {i}')
+    async def run(self): # 일정 시간이 지나면 tuple 삭제
+        for i, tuple in enumerate(self.TwoneighborTuple):
+            if self.checkTimeExpired(tuple[-1]):
+                self.TwoneighborTuple.pop(i)
+                print(f'tuple deleted {i}')
         
     def addTuple(self, n_neighbor_main_addr, n_2hop_addr, n_time = time.time()):
         # will replace same tuple - same n_neighbor_main_addr,n_2hop_addr
@@ -177,15 +189,11 @@ class TwoHopNeighborSet:
 
     def getTwoHopNeigh(self):
         return [node[1] for node in self.TwoneighborTuple]
-    
-    def delTuple(self, n_neighbor_main_addr, n_2hop_addr):
-        pass
 
 class MPRSet:
     def __init__(self):
         super().__init__()
         self.MPRTuple = []
-        # 
 
     def addTuple(self, neighbor):
         self.MPRTuple.append(neighbor)
@@ -195,19 +203,20 @@ class MPRSet:
     
     def delTuple(self, index):
         self.MPRTuple.pop(index)    
+    
+    def updateMpr(self, new_mpr):
+        self.MPRTuple = new_mpr
         
 class MPRSelectorSet:
     def __init__(self):
         super().__init__()
         self.mprSelectorTuple  = []
-        # 
 
-    def run(self): # 일정 시간이 지나면 tuple 삭제
-        while True:
-            for i, tuple in enumerate(self.mprSelectorTuple):
-                if self.checkTimeExpired(tuple[-1]):
-                    self.mprSelectorTuple.pop(i)
-                    print(f'tuple deleted {i}')
+    async def run(self): # 일정 시간이 지나면 tuple 삭제
+        for i, tuple in enumerate(self.mprSelectorTuple):
+            if self.checkTimeExpired(tuple[-1]):
+                self.mprSelectorTuple.pop(i)
+                print(f'tuple deleted {i}')
         
     def addTuple(self, ms_main_addr, ms_time = time.time()):
         self.mprSelectorTuple.append((ms_main_addr, ms_time))
@@ -230,17 +239,21 @@ class TopologyInfo:
     def __init__(self):
         super().__init__()
         self.topoloyTuple = []
-        # 
+    
 
-    def run(self): # 일정 시간이 지나면 tuple 삭제
-        while True:
-            for i, tuple in enumerate(self.topoloyTuple):
-                if self.checkTimeExpired(tuple[-1]):
-                    self.topoloyTuple.pop(i)
-                    print(f'tuple deleted {i}')
+    async def run(self): # 일정 시간이 지나면 tuple 삭제
+        for i, tuple in enumerate(self.topoloyTuple):
+            if self.checkTimeExpired(tuple['t_time']):
+                self.topoloyTuple.pop(i)
+                print(f'tuple deleted {i}')
         
     def addTuple(self, t_dest_addr, t_last_addr, t_seq, t_time = time.time()):
-        self.topoloyTuple.append((t_dest_addr, t_last_addr, t_seq, t_time))
+        self.topoloyTuple.append({
+            't_dest_addr' : t_dest_addr,
+            't_last_addr' : t_last_addr, 
+            't_seq' : t_seq, 
+            't_time' : t_time
+            })
     
     def delTuple(self, index):
         self.topoloyTuple.pop(index)
@@ -252,18 +265,32 @@ class TopologyInfo:
 
     def getTupleLastAddr(self, t_last_addr):
         # 주소에 해당하는 ansn 반환
-        return ansn
+        return self.topoloyTuple[self.findTuple(t_last_addr)]['t_seq']
     
     def updateTuple(self, idx, t_dest_addr, t_last_addr, t_seq, t_time):
-        pass
+        original = self.topoloyTuple[idx]
+        self.topoloyTuple[idx] = {
+            't_dest_addr' : (t_dest_addr if t_dest_addr is not None else original['t_dest_addr']),
+            't_last_addr' : (t_last_addr if t_last_addr is not None else original['t_last_addr']), 
+            't_seq' : (t_seq if t_seq is not None else original['t_seq']), 
+            't_time' : (t_time if t_time is not None else original['t_time']),
+        }
     
-    def findTuple(self, t_dest_addr, t_last_addr, t_seq, t_time):\
-        pass # none 제외 해당 조건 있으면 tuple 찾기
+    def findTuple(self, t_dest_addr=None, t_last_addr=None, t_seq=None, t_time=None):
+        for i, singleTuple in enumerate(self.topologyTuple):
+            if (t_dest_addr is None or singleTuple['T_dest_addr'] == t_dest_addr) and \
+                (t_last_addr is None or singleTuple['T_last_addr'] == t_last_addr) and \
+                (t_seq is None or singleTuple['T_seq'] == t_seq) and \
+                (t_time is None or singleTuple['T_time'] == t_time):
+                return i
+
+        return None
+                        
     
     def getTuple(self):
         return self.topoloyTuple
-    
-class DuplicatedSet():
+
+class DuplicatedSet:
     '''
     maintain transmitted message 
     to prevent transmitting the same 
@@ -275,12 +302,18 @@ class DuplicatedSet():
     D_iface_list        : list of the addresses of the interfaces on which the message has been received
     D_time              : the time at which a tuple expires
     '''
-    def singleTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):                    
+    def _singleTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):                    
         return [d_addr, d_seq_num, d_retransmitted, [d_iface_list], d_time]
         
     def __init__(self):
         super().__init__()
         self.dTupleList = []
+        
+    async def run(self): # 일정 시간이 지나면 tuple 삭제
+        for i, tuple in enumerate(self.dTupleList):
+            if self.checkTimeExpired(tuple[-1]):
+                self.dTupleList.pop(i)
+                print(f'tuple deleted {i}')
         
     def checkExist_addr_seq(self, d_addr, d_seq_num, check_retransmit=False):      
         print('dup', self.dTupleList)  
@@ -296,16 +329,16 @@ class DuplicatedSet():
     
     def checkExist_iface(self, ip_address, check_retransmit=False):
         for i, single_tuple in enumerate(self.dTupleList):
-            if  ip_address in single_tuple[3]:
+            if ip_address in single_tuple[3]:
                 if check_retransmit:
                     if single_tuple[2] == False:
                         return i                    
                 else:
                     return i
-        return False
+        return -1
                 
     def addTuple(self, d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time):
-        self.dTupleList.append(self.singleTuple(d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time))
+        self.dTupleList.append(self._singleTuple(d_addr, d_seq_num, d_retransmitted, d_iface_list, d_time))
         self.dTupleList.sort(key=lambda x: x[1])
         
     def updateTuple(self, ptr, new_time, dest_addr, retransmit):
@@ -318,32 +351,27 @@ class DuplicatedSet():
             original[2] = retransmit
         self.dTupleList[ptr] = original 
         self.dTupleList.sort(key=lambda x: x[1])
-    
-class TimeOutManager:
+        
+        
+    def checkTimeExpired(self, addtime):
+        if time.time() - addtime > 1: # time has to be checked 
+            return True
+        return False  
+
+class TimeOutManager(threading.Thread):
     '''
     tour every repository and pop element that over times
     '''
     def __init__(self):
         super().__init__()
+        self.repository = []
         
     def run(self):
-        pass
+        for single_repo in self.repository:
+            asyncio.run(single_repo.run())
     
-    def addRepository(self):
-        pass
-     
-# processing : using the content of the messages
-# forwarding : retransmitting the same message
-
-
-class LocationSet():
-    def __init__(self) -> None:
-        pass
-    def addTuple(self):
-        pass
-    def updateTuple(self):
-        pass
-    
+    def addRepository(self, repo):
+        self.repository.append(repo)
     
 class RouteTable:
     def __init__(self) -> None:
@@ -387,9 +415,14 @@ class RouteTable:
             
         return False
     
-    
 if __name__ == '__main__':
     # duplicated Set Test
     
     duplicated_set = DuplicatedSet()
-    duplicated_set.addTuple(808464432, 12337, False, ['127.0.0.1'], 1705926862.1785054)
+    duplicated_set.addTuple(808464432, 12337, False, '127.0.0.1', 1705926862.1785054)
+    print(duplicated_set.dTupleList)
+    print(duplicated_set.checkExist_addr_seq(808464432,12337))
+    print(duplicated_set.checkExist_addr_seq(808464432,12338))
+    duplicated_set.addTuple(808464432, 12338, False, '127.0.0.1', 1705926862.1785054)
+    print(duplicated_set.checkExist_addr_seq(808464432,12338))
+    print(duplicated_set.checkExist_iface('127.0.0.1'))

@@ -1,0 +1,20 @@
+2024-01-23 10:56:19,657 - node - INFO - init complete. addr : 127.0.0.1
+2024-01-23 10:56:20,249 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:20,251 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:20,642 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,642 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,643 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,644 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,645 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,646 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,697 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,697 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,698 - node - WARNING - packet with out Raw
+2024-01-23 10:56:20,699 - node - WARNING - packet with out Raw
+2024-01-23 10:56:21,245 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:21,247 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:22,244 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:22,246 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:23,246 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:23,247 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:56:23,746 - node - INFO - keyboard interrupt

@@ -1,0 +1,240 @@
+2024-01-23 10:42:54,456 - node - INFO - init complete. addr : 127.0.0.1
+2024-01-23 10:42:54,800 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:54,802 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:55,796 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:55,798 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:56,797 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:56,798 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:57,798 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:57,799 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:58,798 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:58,799 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:58,842 - node - WARNING - packet with out Raw
+2024-01-23 10:42:58,843 - node - WARNING - packet with out Raw
+2024-01-23 10:42:58,892 - node - WARNING - packet with out Raw
+2024-01-23 10:42:58,893 - node - WARNING - packet with out Raw
+2024-01-23 10:42:59,798 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:42:59,800 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:00,800 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:00,802 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:01,802 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:01,803 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:02,803 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:02,804 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:03,659 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,660 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,661 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,662 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,663 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,665 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,706 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,708 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,709 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,711 - node - WARNING - packet with out Raw
+2024-01-23 10:43:03,803 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:03,805 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:04,804 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:04,805 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:05,805 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:05,806 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:06,805 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:06,807 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:07,808 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:07,809 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:08,809 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:08,811 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:09,811 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:09,813 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:10,811 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:10,812 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:11,811 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:11,812 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:12,813 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:12,815 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:13,814 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:13,816 - node - WARNING - packet with out TCP or UDP
+2024-01-23 10:43:14,691 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,692 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,693 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,695 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,696 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,697 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,747 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,749 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,750 - node - WARNING - packet with out Raw
+2024-01-23 10:43:14,752 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,642 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,643 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,644 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,646 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,647 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,648 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,719 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,720 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,723 - node - WARNING - packet with out Raw
+2024-01-23 10:43:34,725 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,730 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,731 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,731 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,732 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,778 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,780 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,821 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,822 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,823 - node - WARNING - packet with out Raw
+2024-01-23 10:43:35,824 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,660 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,661 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,661 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,662 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,663 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,663 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,667 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,668 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,670 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,671 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,673 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,674 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,674 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,675 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,676 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,677 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,843 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,843 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,844 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,844 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,845 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,845 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,848 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,849 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,853 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,854 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,879 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,879 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,880 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,881 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,882 - node - WARNING - packet with out Raw
+2024-01-23 10:43:40,882 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,918 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,920 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,921 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,922 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,955 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,957 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,968 - node - WARNING - packet with out Raw
+2024-01-23 10:43:48,970 - node - WARNING - packet with out Raw
+2024-01-23 10:44:07,929 - node - WARNING - packet with out Raw
+2024-01-23 10:44:07,930 - node - WARNING - packet with out Raw
+2024-01-23 10:44:07,931 - node - WARNING - packet with out Raw
+2024-01-23 10:44:07,932 - node - WARNING - packet with out Raw
+2024-01-23 10:44:07,979 - node - WARNING - packet with out Raw
+2024-01-23 10:44:07,981 - node - WARNING - packet with out Raw
+2024-01-23 10:44:08,022 - node - WARNING - packet with out Raw
+2024-01-23 10:44:08,024 - node - WARNING - packet with out Raw
+2024-01-23 10:44:08,026 - node - WARNING - packet with out Raw
+2024-01-23 10:44:08,029 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,166 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,167 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,168 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,169 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,211 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,213 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,218 - node - WARNING - packet with out Raw
+2024-01-23 10:44:11,221 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,723 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,724 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,729 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,731 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,732 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,732 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,779 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,779 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,780 - node - WARNING - packet with out Raw
+2024-01-23 10:44:16,782 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,653 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,654 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,655 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,656 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,717 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,719 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,721 - node - WARNING - packet with out Raw
+2024-01-23 10:44:18,724 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,795 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,796 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,797 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,797 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,848 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,849 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,857 - node - WARNING - packet with out Raw
+2024-01-23 10:44:32,857 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,308 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,309 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,310 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,310 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,311 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,311 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,313 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,314 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,316 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,317 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,318 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,320 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,321 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,322 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,322 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,323 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,478 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,479 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,479 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,480 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,481 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,481 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,483 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,484 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,486 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,487 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,501 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,502 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,502 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,503 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,504 - node - WARNING - packet with out Raw
+2024-01-23 10:44:40,505 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,533 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,534 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,534 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,535 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,536 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,536 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,582 - node - WARNING - packet with out Raw
+2024-01-23 10:44:50,584 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,026 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,027 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,027 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,028 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,071 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,072 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,169 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,170 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,171 - node - WARNING - packet with out Raw
+2024-01-23 10:45:13,172 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,199 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,200 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,201 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,203 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,204 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,205 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,242 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,243 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,244 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,246 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,695 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,696 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,696 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,697 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,698 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,699 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,762 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,763 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,764 - node - WARNING - packet with out Raw
+2024-01-23 10:45:14,764 - node - WARNING - packet with out Raw
+2024-01-23 10:45:16,291 - node - INFO - keyboard interrupt
