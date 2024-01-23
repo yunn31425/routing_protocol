@@ -4,7 +4,9 @@ from typing import Any
 from constants import *
 import time
 import struct
-        
+from gps_interface import *
+from multiprocessing import Process, Manager, Queue
+import geopy.distance
 
 def decode_validTime(valid_time):
     '''
@@ -276,7 +278,7 @@ class TCMessage(threading.Thread):
             else:
                 self.parent.topology_set.addTuple(addr, source_addr, ansn, time.time() + single_msg['vtime'])
    
-class MoveMessage(threading.Thread):
+class MoveMessage():
     '''
     soruce : monitor current node movement ->
     soruce : send message to one hop neighbor ->
@@ -305,16 +307,76 @@ class MoveMessage(threading.Thread):
     Node Type : 1 : moving Node, 2 : Moving Close Node, 3 : Moving away Node
     '''
     
-    def __init__(self) -> None:
-        pass
-    def packMessage(self):
-        pass
-    def unpackMessage(self):
-        pass
+    def __init__(self, parent) -> None:
+        self.gps_handler = GPSReceiver()
+        self.check_time_prev = 0
+        self.longitude_prev = None
+        self.latitude_prev = None
+        
+        self.parent = parent
+        self.logger = parent.logger
+        self.sendr = parent.sender
+        
+        self.monitoring_process = Process(target=self.monitorVelocity)
+        
+        self.monitoring_process.start()
+        
+        self.monitoring_process.join()
+        
+    def getSpeed(self, longitude_prev, latitude_prev, longitude_cur, latitude_cur):
+            coords_prev = (latitude_prev, longitude_prev)
+            coords_cur = (latitude_cur, longitude_cur)
+
+            distance = geopy.distance.distance(coords_prev, coords_cur).meters
+            speed = distance / VELO_CHECK_PERIOD
+                        
+            return speed
+        
+    def monitorVelocity(self):
+        while True:
+            if time.time() - self.check_time_prev > VELO_CHECK_PERIOD:
+                self.check_time_prev = time.time()
+                
+                if self.gps_handler.getVelocity()['velocity'] > MOVE_VELO_THRESHOLD:
+                    message_contents = self.packMessage(1, self.gps_handler.getVelocity(), \
+                        self.gps_handler.getCoordinate())
+                    packet_contents = self.parent.
+                    self.sender.broadcastMsg() 
+        
+    def packMessage(self, nodeType, velocity, coordinate):
+        packet_format = '!HHHHHHHHI'
+        packed_data = struct.pack(packet_format, nodeType, coordinate['longitude_deg'], \
+            coordinate['latitude_deg'], coordinate['absolute_altitude_m'], velocity['north_m_s'],\
+                velocity['east_m_s'], velocity['down_m_s'], self.parent.sender.getIPAddr())
+        return packed_data       
+        
+    def unpackMessage(self, binary_data):
+        packet_format = '!HHHHHHHHI'
+        unpacked_data = struct.unpack(packet_format, binary_data)
+        
+        node_data = {
+            'node_type' : unpacked_data[0],
+            'message_size' : unpacked_data[1],
+            'longitude' : unpacked_data[2],
+            'latitude' : unpacked_data[3],
+            'altitude' : unpacked_data[4],
+            'vel_north' : unpacked_data[5],
+            'vel_east' : unpacked_data[6],
+            'vel_down' : unpacked_data[7],
+            'iface_addr' : unpacked_data[8]
+        }
+        
+        return node_data
+    
     def forwardMessage(self):
-        pass
-    def processMessage(self):
-        pass
+        '''
+        MoveMessage never be forwarded!
+        '''
+        return
+    
+    def processMessage(self, binary_packet):
+        unpacked_data = self.unpackMessage()
+        
     
 class RecalcMesage(threading.Thread):
     '''

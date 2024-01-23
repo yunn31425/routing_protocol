@@ -108,6 +108,8 @@ class OLSRManager:
         self.hello_message_handler = helloMessage(self, parent.getIPAddr())    
         self.packet_header_handler = PacketHeader(parent.getIPAddr())
         self.tc_message_handler = TCMessage(self) 
+        self.move_message_handler = MoveMessage()
+        self.recalc_message_handler = RecalcMesage()
         
     def packet_processing(self, packet):
         if len(packet['payload']) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
