@@ -7,13 +7,13 @@ import struct
 from gps_interface import *
 from multiprocessing import Process, Manager, Queue
 import geopy.distance
+import time
 
 def decode_validTime(valid_time):
     '''
     decode vaild time from binary to integer
     '''
-    c = 0.0625
-        
+            
     mantissa = (valid_time >> 4) & 0x0f
     exponent = valid_time & 0x0f
     
@@ -27,16 +27,27 @@ def encode_validTime(emission_interval):
     exponent = 0
 
     # Calculate the exponent first
-    while emission_interval >= C:
+    while emission_interval > C:
         emission_interval /= 2
         exponent += 1
 
     # Calculate the mantissa
-    mantissa = int((emission_interval / C - 1) * 16)
-
+    mantissa = int(((emission_interval / C) - 1) * 16)
     # Combine mantissa and exponent into Htime
     Htime = (mantissa << 4) | exponent
     return Htime
+
+def encodeIPAddr(ip_addr : str):
+    binary_addr = b''
+    for digit in ip_addr.split('.'):
+        binary_addr += struct.pack('!B', int(digit))
+        
+    return binary_addr
+
+def decodeIPAddr(ip_addr : int):
+    tpl = struct.unpack('!BBBB', ip_addr)
+    return str(tpl[0]) + '.' + str(tpl[1]) + '.' \
+        + str(tpl[2]) + '.' + str(tpl[3])
 
 class helloMessage(threading.Thread):
     '''
@@ -53,21 +64,27 @@ class helloMessage(threading.Thread):
         self.last_emission_time = 0
         self.parent = parent
         self.ip_address = ip_address
+        self.willingness = WILL_DEFAULT
+        self.seq_num = 0
         
     def run(self):
-        if self.last_emission_time - time.time() > HELLO_INTERVAL:
-            self.packMessage()
-            self.last_emission_time = time.time()
+        while True:
+            if time.time() - self.last_emission_time > HELLO_INTERVAL:
+                self.last_emission_time = time.time()
+                self.packMessage()
+            else:
+                time.sleep(HELLO_INTERVAL/2)
             
     def packMessage(self):
         '''
         pack hello message
         '''
         packet_format = '!HBB'
+        print(encode_validTime(HELLO_INTERVAL))
         packed_data = struct.pack(packet_format,
                                     RESERVED,             # 0, 16bits
-                                    encode_validTime(NEIGHB_HOLD_TIME),     # Htime 8bits # mentissa needtobecheck
-                                    WILL_DEFAULT)         # willingness default 8bits
+                                    encode_validTime(HELLO_INTERVAL),     # Htime 8bits # mentissa needtobecheck
+                                    self.willingness)         # willingness default 8bits
         packet_format = '!BBHI'
         for single_tuple in self.parent.link_set.getTuple():
             link_code = NOT_NEIGH
@@ -83,7 +100,10 @@ class helloMessage(threading.Thread):
                                         link_message_size,
                                         single_tuple._l_neighbor_iface_addr
                                         )                
-        return packed_data
+        packed_packet = self.parent.packet_header_handler.attatchHeader(
+            [HELLO_MESSAGE, encode_validTime(HELLO_INTERVAL), 1, self.seq_num, packed_data]
+            )
+        asyncio.run(self.parent.sender.broadcastMsg(packed_packet))
     
     def unpackMessage(self, packed_data): # function need to be checked
         '''
@@ -122,10 +142,11 @@ class helloMessage(threading.Thread):
         for unpacked_data in unpacked_data_lst:
             # process for link tuple
             link_tuple_exist = self.parent.link_set.checkExist(source_addr)
-            if  link_tuple_exist:
+            if link_tuple_exist == False:
                 # need to be checked ASYM_TIME value?
                 self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
             else:
+                print(link_tuple_exist, self.parent.link_set.getTuple())
                 self.parent.link_set.updateTuple(link_tuple_exist, None, None, None, time.time() + single_packet['vtime'], None)
                 if self.ip_address == unpacked_data[4]:
                     if unpacked_data[1] == LOST_LINK:
@@ -198,7 +219,7 @@ class helloMessage(threading.Thread):
         # todo : 이웃 변동시 MPR set 재계산
         # todo : MPR set 변동시 HELLO MESSAGE 재발송
         
-    def forwardMessage(self):
+    def forwardMessage(self, single_message):
         '''
         hello message MUST never be forwarded
         '''
@@ -237,8 +258,9 @@ class TCMessage(threading.Thread):
         ANSN, RESERVED, advertisesd main address ....
         '''
         ansn = struct.unpack_from('!H', packed_data, 0)
+        unpacked_data = None
         for i in range(length): # todo - length 고려 길이 맞추어 줄 것
-            unpacked_data += struct.unpack_from('!I', unpacked_data, i)
+            unpacked_data += struct.unpack_from('!I', packed_data, i)
             
         return unpacked_data
         
@@ -278,7 +300,7 @@ class TCMessage(threading.Thread):
             else:
                 self.parent.topology_set.addTuple(addr, source_addr, ansn, time.time() + single_msg['vtime'])
    
-class MoveMessage():
+class MoveMessage(threading.Thread):
     '''
     soruce : monitor current node movement ->
     soruce : send message to one hop neighbor ->
@@ -293,18 +315,30 @@ class MoveMessage():
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |            Node Type          |          Message Size         |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                       Interface Address                       |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    
+    * MOVE_MOVE_NODE
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |            Longitude          |            Latitude           |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |            Altitude           |        Velocity_North         |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |         Velocity_East         |         Velocity_Down         |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                       Interface Address                       |
+    
+    * MOVE_CLOSE_NODE, MOVE_AWAY_NODE, 
+    * NODE_ROUTE_RECALC
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                  Bridge Node Interface Address                |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                  Bridge Node Interface Address                |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     :                             . . .                             :
     :                                                               :
     
     Node Type : 1 : moving Node, 2 : Moving Close Node, 3 : Moving away Node
+                4 : recalc Message
     '''
     
     def __init__(self, parent) -> None:
@@ -313,108 +347,147 @@ class MoveMessage():
         self.longitude_prev = None
         self.latitude_prev = None
         self.msg_seq_num = 0
+        self.ip_address = parent.ip_address
         
         self.parent = parent
         self.logger = parent.logger
         self.sendr = parent.sender
-        
+        self.status = MOVE_DEFAULT_STATE
         self.monitoring_process = Process(target=self.monitorVelocity)
         
-        self.monitoring_process.start()
-        
-        self.monitoring_process.join()
+        self.monitoring_process.start()        
         
     def getSpeed(self, longitude_prev, latitude_prev, longitude_cur, latitude_cur):
-            coords_prev = (latitude_prev, longitude_prev)
-            coords_cur = (latitude_cur, longitude_cur)
+        '''
+        not be used
+        '''
+        coords_prev = (latitude_prev, longitude_prev)
+        coords_cur = (latitude_cur, longitude_cur)
 
-            distance = geopy.distance.distance(coords_prev, coords_cur).meters
-            speed = distance / VELO_CHECK_PERIOD
-                        
-            return speed
-        
+        distance = geopy.distance.distance(coords_prev, coords_cur).meters
+        speed = distance / VELO_CHECK_PERIOD
+                    
+        return speed
+    
     def monitorVelocity(self):
         while True:
             if time.time() - self.check_time_prev > VELO_CHECK_PERIOD:
-                self.check_time_prev = time.time()
+                if self.gps_handler.checkStatus():
+                    
+                    self.check_time_prev = time.time()
+                    if self.gps_handler.getVelocity()['velocity'] > MOVE_VELO_THRESHOLD:
+                        self.broadcastMoveMsg()
+                        time.sleep(MOVE_INTERVAL)
+                        necessary_neighbor = self.calcNecessaryNeighbor()
+                        self.broadcastRecalc(necessary_neighbor)
+                    
                 
-                if self.gps_handler.getVelocity()['velocity'] > MOVE_VELO_THRESHOLD:
-                    message_contents = self.packMessage(1, self.gps_handler.getVelocity(), \
-                        self.gps_handler.getCoordinate())
-                    packet_contents = self.parent.attatchHeader(
-                        [MOVE_MESSAGE, 2, 2, self.msg_seq_num, message_contents])
-                    self.sender.broadcastMsg() 
+    def broadcastMoveMsg(self):        
+        message_contents = self.packMessageMoving(MOVE_MOVE_NODE, self.gps_handler.getVelocity(), \
+            self.gps_handler.getCoordinate())
+        packet_contents = self.parent.packet_header_handler.attatchHeader(
+            [MOVE_MESSAGE, 2, 2, self.msg_seq_num, message_contents])
+        self.sender.broadcastMsg(packet_contents)
+        self.status = MOVE_MESSAGE_SENT_STATE
         
-    def packMessage(self, nodeType, velocity, coordinate):
-        packet_format = '!HHHHHHHHI'
-        packed_data = struct.pack(packet_format, nodeType, coordinate['longitude_deg'], \
+    def broadcastRecalc(self, necessary_neighbor):
+        message_contents = self.packMessageRecv()
+        packet_contents = self.parent.packet_header_handler.attatchHeader(
+            [RECALC_MESSAGE, TOP_HOLD_TIME, 255, self.msg_seq_num, message_contents])
+        self.sender.broadcastMsg(packet_contents)
+        self.status = MOVE_DEFAULT_STATE
+        
+    def packMessageRecv(self, node_data, interface_addr):
+        packet_format1 = '!HH'
+        packed_data = struct.pack(packet_format1, NODE_ROUTE_RECALC, len(interface_addr)*4+8)
+        packed_data += encodeIPAddr(self.parent.sender.getIPAddr())
+        for addr in interface_addr:
+            packed_data += encodeIPAddr(addr)
+            
+        return packed_data    
+
+    def packMessageMoving(self, nodeType, velocity, coordinate):
+        packet_format1 = '!HH'
+        packet_format2 = '!eeeeee'
+        packed_data = struct.pack(packet_format1, nodeType, 20)
+        packed_data += encodeIPAddr(self.parent.sender.getIPAddr())
+        packed_data += struct.pack(packet_format2, coordinate['longitude_deg'], \
             coordinate['latitude_deg'], coordinate['absolute_altitude_m'], velocity['north_m_s'],\
-                velocity['east_m_s'], velocity['down_m_s'], self.parent.sender.getIPAddr())
-        return packed_data       
-        
-    def unpackMessage(self, binary_data):
-        packet_format = '!HHHHHHHHI'
-        unpacked_data = struct.unpack(packet_format, binary_data)
-        
-        node_data = {
-            'node_type' : unpacked_data[0],
-            'message_size' : unpacked_data[1],
-            'longitude' : unpacked_data[2],
-            'latitude' : unpacked_data[3],
-            'altitude' : unpacked_data[4],
-            'vel_north' : unpacked_data[5],
-            'vel_east' : unpacked_data[6],
-            'vel_down' : unpacked_data[7],
-            'iface_addr' : unpacked_data[8]
-        }
-        
-        return node_data
+                velocity['east_m_s'], velocity['down_m_s'])
+        return packed_data
     
-    def forwardMessage(self):
+    def unpackMessage(self, binary_data):
+        packet_format = '!HHI'
+        message_type, message_size, sent_interface_addr = struct.unpack(packet_format, binary_data)
+        node_data = None
+        
+        if message_type == MOVE_MOVE_NODE:
+            unpacked_data = struct.unpack_from('!eeeeee', binary_data, 8)
+            node_data = {
+            'longitude' : unpacked_data[0],
+            'latitude' : unpacked_data[1],
+            'altitude' : unpacked_data[2],
+            'vel_north' : unpacked_data[3],
+            'vel_east' : unpacked_data[4],
+            'vel_down' : unpacked_data[5]
+            }
+        elif message_type in [MOVE_CLOSE_NODE, MOVE_AWAY_NODE, NODE_ROUTE_RECALC]:
+            unpacked_data = struct.unpack_from(f'!I{message_size-8}', binary_data, 8)
+            node_data = unpacked_data
+        else:
+            print("undefined message")
+            return
+                
+        return node_data, message_type, sent_interface_addr
+    
+    def forwardMessage(self, message):
         '''
-        MoveMessage never be forwarded!
+        MoveMessage need to be forwarded if message type is NODE_ROUTE_RECALC
         '''
-        return
+        node_data, message_type, sent_interface_addr = self.unpackMessage(message)
+        if message_type == NODE_ROUTE_RECALC:
+            packed_packet = self.parent.packet_header_handler.attatchHeader(
+            [NODE_ROUTE_RECALC, encode_validTime(NODE_RECALC_INTERVAL), 1, self.seq_num, message]
+            )
+            asyncio.run(self.parent.sender.broadcastMsg(packed_packet)) #todo
+        else:
+            return
+        
+    def routeRecalc(self, r_neighbor_reachable_list, moving_node_ip):
+        min_hop = float('INF')
+        next_addr = None
+        for i, route in enumerate(self.parent.RouteTable.getTuple()):
+            if route['R_dest_addr'] in r_neighbor_reachable_list and route['R_dist'] < min_hop:
+                min_hop = route['R_dist']
+                next_addr = route['R_next_addr']
+                
+        for i, route in enumerate(self.parent.RouteTable.getTuple()):
+            if route['R_dest_addr'] == moving_node_ip:
+                self.parent.RouteTable.updateTuple(None, next_addr, min_hop+1, None)            
+    
+    def calcNecessaryNeighbor(self):
+        '''
+        for a moving node, after gathering all messages from neighbor node
+        '''
+        all_reachable = self.parent.reachable_set.getAllReachable()
+        necessary_neighbor = []
+        while len(all_reachable) > 0:
+            for single_lst in self.parent.reachable_set.getTuple():
+                necessary_neighbor.append(single_lst)
+                all_reachable = [single_addr for single_addr in all_reachable \
+                                 if single_addr not in single_lst['r_neighbor_reachable_list']]
+                
+        return necessary_neighbor
     
     def processMessage(self, binary_packet):
-        unpacked_data = self.unpackMessage()
+        node_data, message_type, sent_interface_addr = self.unpackMessage(binary_packet)
+        if message_type == NODE_ROUTE_RECALC:
+            self.routeRecalc(node_data, sent_interface_addr)
+        elif  message_type == MOVE_MOVE_NODE:
+            self.packMessageRecv(node_data, sent_interface_addr)
+        elif self.status == MOVE_MESSAGE_SENT_STATE: 
+           self.parent.reachable_set.addTuple(sent_interface_addr, message_type, node_data)
         
-    
-class RecalcMesage(threading.Thread):
-    '''
-    emitted by moving node 
-    if a node receive this message of (moving node, bridge node),
-    routing toward moving node SHOULD be changed toward bridge node first
-    
-    Message Format
-    0                    1                   2                   3
-     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |            Node Type          |          Message Size         |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                  Moving Node Interface Address                |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                  Bridge Node Interface Address                |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                  Bridge Node Interface Address                |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    :                             . . .                             :
-    :                                                               :
-    
-    Node Type : 1 : moving Node, 2 : Moving Close Node, 3 : Moving away Node
-    '''
-    
-    def __init__(self) -> None:
-        pass
-    def packMessage(self):
-        pass
-    def unpackMessage(self):
-        pass
-    def forwardMessage(self):
-        pass
-    def processMessage(self):
-        pass
-    
 class MIDMessage(threading.Thread):
     '''
     not defined yet : todo

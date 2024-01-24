@@ -1,0 +1,12 @@
+2024-01-24 03:11:28,563 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-24 03:11:28,567 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-24 03:11:28,577 - node - INFO - init complete
+2024-01-24 03:11:33,656 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,657 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,658 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,659 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,672 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,674 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,675 - node - WARNING - packet with out Raw
+2024-01-24 03:11:33,676 - node - WARNING - packet with out Raw
+2024-01-24 03:11:42,198 - node - INFO - keyboard interrupt

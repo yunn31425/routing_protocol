@@ -59,23 +59,32 @@ class Sender:
                 
             elif e.errno == 98:
                 print("port is already in use")
+                self.logger.error("port is already in use")
                 listenSocket.close()
                 SendSocket.close()
                 sys.exit()
                 
         self.logger.info(f'Sender init complete. addr : {self.ip_address}')
                     
-    def sendMsg(single_mssage, dest_addr):
+    async def sendMsg(self, single_mssage, dest_addr):
         '''
         send message, especially for forwarding
         '''
-        with socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW) as sock:
-            sock.sendto(single_mssage, (dest_addr, 0))
+        try:
+            with socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW) as sock:
+                sock.sendto(single_mssage, (dest_addr, 0))
+        except OSError as e:
+            self.logger.error(f'send failed : {e.errno}')
     
-    def broadcastMsg(self, packed_message):
-        with socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
+    async def broadcastMsg(self, packed_message):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+                sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
+                self.logger.info('broadcast' + str(packed_message))
+        except OSError as e:
+            print(e.errno)
+            self.logger.error(f'broadcast failed : {e.errno}')
 
     def getIfaceName(self):
         return self.interface_name
@@ -92,7 +101,8 @@ class PacketForwarder:
         self.olsr_manager = parent
         
         self.packet_queue = Queue()
-        self.transmit_queue = Queue()           
+        self.transmit_queue = Queue()
+        self.broadcast_queue = Queue()      
         
         self.logger = self.olsr_manager.logger
         self.sender = Sender(self)
@@ -100,18 +110,19 @@ class PacketForwarder:
         self.interface_name = self.sender.getIfaceName()
         self.ip_address = self.sender.getIPAddr()
         
-        self.enqueue_process = Process(target=self.enqueue)
-        self.enqueue_process.start() 
-        
-        self.dequeue_process = Process(target=self.dequeue)
-        self.dequeue_process.start()
-               
-        self.transmit_process = Process(target=self.transmit)    
-        self.transmit_process.start()
-        
-        # self.dequeue_process.join()
-        # self.enqueue_process.join()
-        # self.transmit_process.join()
+        try:
+            self.enqueue_process = Process(target=self.enqueue)
+            self.enqueue_process.start() 
+            
+            self.dequeue_process = Process(target=self.dequeue)
+            self.dequeue_process.start()
+                
+            self.transmit_process = Process(target=self.transmit)    
+            self.transmit_process.start()
+        except KeyboardInterrupt:            
+            self.dequeue_process.join()
+            self.enqueue_process.join()
+            self.transmit_process.join()
         
     def getIfaceName(self):
         return self.sender.getIfaceName()
@@ -145,37 +156,56 @@ class PacketForwarder:
             self.logger.warning(f'packet with out Raw')
             return
         
+        # if queue size overflow, control willingness
+        if self.packet_queue.qsize() > MAX_QUEUE_LENGTH:
+            self.olsr_manager.hello_message_handler.willingness = WILL_NEVER
+        
+        if self.olsr_manager.hello_message_handler.willingness == WILL_NEVER:
+            if self.packet_queue.qsize() < MAX_QUEUE_LENGTH/1.2:
+                self.olsr_manager.hello_message_handler.willingness == WILL_DEFAULT
+         
         ##print(packet.summary(), 'dequeing', self.packet_queue.qsize())
             
     async def async_sniff(self):
         sniff(iface=self.interface_name, store=False, prn=self.enqueuing)
         
     def enqueue(self):
+        '''
+        enqueuing received packet to queue before processing
+        '''
         asyncio.run(self.async_sniff())
         
     def dequeue(self):
+        '''
+        dequeuing received packet to queue for processing
+        '''
         try:            
             while True:
                 if not self.packet_queue.empty():                
                     single_packet = self.packet_queue.get()
                     print(single_packet['src_IP'], '>>' ,single_packet['dst_IP'], 'dequeing')
                     if single_packet['dst_port'] == 14568:
-                        ##print('---', single_packet['payload'])
-                        self.manager.packet_processing(single_packet)
+                        print("olsr message")
+                        self.olsr_manager.packet_processing(single_packet)
                     else:
-                        self.packet_processing(single_packet)
+                        print("default")
+                        self.default_packet_processing(single_packet)
         except KeyboardInterrupt:
             print("keyboard interrupt")
             self.logger.info('keyboard interrupt')
-            sys.exit()
-        
-    def packet_processing(self, single_packet):
-        '''
-        if src_port and dst_port is all olsr port, process it
-        else forward according to routing table
-        '''     
-        
+            sys.exit()   
+    
     def transmit(self):
+        while True:
+            if not self.transmit_queue.empty():
+                self.transmit_single(self.transmit_queue.get())
+                
+    def transmit_single(self, single_message):
+        single_packet = self.parent.attatchHeader(single_message)
+        dest_ip = self.route_table.getBridge()
+        self.sender(single_packet) 
+    
+    def default_packet_processing(self, single_packet):
         pass
             
 class PacketHeader:
@@ -185,30 +215,45 @@ class PacketHeader:
     def __init__(self, this_node_ip) -> None:
         self.packet_seqence_num = 0
         self.node_ip = this_node_ip
+        
+    def encodeIPAddr(ip_addr : str):
+        binary_addr = b''
+        for digit in ip_addr.split('.'):
+            binary_addr += struct.pack('!B', int(digit))
+            
+        return binary_addr
+
+    def decodeIPAddr(ip_addr : int):
+        tpl = struct.unpack('!BBBB', ip_addr)
+        return str(tpl[0]) + '.' + str(tpl[1]) + '.' \
+            + str(tpl[2]) + '.' + str(tpl[3])
+                
     
     def attatchHeader(self, message_contents):
-        packet_contents = ''
+        packet_contents = b''
         packet_length = 0
-        if len(message_contents) == 0:
+        print(message_contents)
+        if len(message_contents[4]) == 0:
             return
-        for message in message_contents:
-            message_size = len(message[4])
-            packet_format = '!BBHIBBH' + f'I{message_size}'
-            packet_contents += struct.pack(packet_format,
-                                            message[0],         # message_type
-                                            message[1],         # vtime
-                                            message_size,
-                                            self.this_node_ip,  # originator_address
-                                            message[2],         # time to live
-                                            0,                  # hop_count
-                                            message[3],         # message_seq_num
-                                            message[4])         # message conents
-            packet_length += message_size + 4*3
+        
+        message_size = len(message_contents[4])
             
-        packet_contents = struct.pack('!HH', 
+        packet_contents = struct.pack('!HHBBH', 
                                         packet_length,
-                                        self.packet_seqence_num) + packet_contents
+                                        self.packet_seqence_num,
+                                        message_contents[0],         # message_type
+                                        message_contents[1],         # vtime
+                                        message_size)
+        packet_contents += encodeIPAddr(self.node_ip)  # originator_address
+        packet_contents += struct.pack("!BBH",
+                                        message_contents[2],         # time to live
+                                        0,                  # hop_count
+                                        message_contents[3])         # message_seq_num
+        packet_contents += message_contents[4]
+        packet_length += message_size + 4*3
+
         self.packet_seqence_num += 1
+        print(packet_contents)
         return packet_contents
             
     def detatchHeader(self, binary_packet):
@@ -249,6 +294,8 @@ class OLSRManager:
         self.sender = Sender(self)
         self.ip_address = self.sender.getIPAddr()
         
+        self.packet_header_handler = PacketHeader(self.ip_address)
+        
         self.mprSet = MPRSet()
         self.neighbor_set = NeighborSet()
         self.link_set = LinkSet()
@@ -256,23 +303,30 @@ class OLSRManager:
         self.duplicated_set = DuplicatedSet()
         self.mprSelector_set = MPRSelectorSet()
         self.topology_set  = TopologyInfo()
+        self.reachable_set = ReachablitySet()
         self.route_table = RouteTable()        
         
+        self.timeout_manager = TimeOutManager()
+        self.timeout_manager.addRepository([self.link_set, self.two_hop_neighbor_set,
+                                            self.mprSelector_set, self.topology_set,
+                                            self.duplicated_set])
+        self.timeout_manager.start()
+        
         self.hello_message_handler = helloMessage(self, self.ip_address)    
-        self.packet_header_handler = PacketHeader(self.ip_address)
+        self.move_message_handler = MoveMessage(self)
         self.tc_message_handler = TCMessage(self) 
         # self.move_message_handler = MoveMessage(self) only when real connection
-        self.recalc_message_handler = RecalcMesage()
         
         self.packet_forwarder = PacketForwarder(self)
         
         print("init complete")
-        self.logger.debug('init complete')
+        self.logger.info('init complete')
+        
+        self.hello_message_handler.start()
         
     def packet_processing(self, packet):
         if len(packet['payload']) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
             return
-        ##print('---', packet['payload'])
         seq_num, message_contents = self.packet_header_handler.detatchHeader(packet['payload'])
         source_addr = packet['src_IP']
         dest_addr = packet['dst_IP']
@@ -282,9 +336,9 @@ class OLSRManager:
                 continue 
             
             #message processing
-            if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num']) != -1:
+            if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num']) is not False:
                 print("already processed message")
-                continue # already processed message
+                pass # already processed message
             # process message 
             elif single_msg['message_type'] == HELLO_MESSAGE:
                 print("hello message")
@@ -298,17 +352,16 @@ class OLSRManager:
                 pass # not yet to process it
             elif single_msg['message_type'] == MOVE_MESSAGE:
                 self.move_message_handler.processMessage(single_msg, source_addr)
-                pass
             elif single_msg['message_type'] == RECALC_MESSAGE:
                 self.recalc_message_handler.processMessage(single_msg, source_addr)
-                pass
             else:
                 print('unidenfitied message type')
                 self.logger.warning('unidenfitied message type : ', single_msg['message_type'])
                 
             # message  forwarding # need to be check
-            if self.duplicated_set.checkExist_iface(self.ip_address) and self.duplicated_set.checkExist_iface(dest_addr):
-                continue # message which has been forwarded 
+            idx = self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num'])
+            if (idx is not False) and (self.ip_address in self.duplicated_set.getIfaceLst(idx)):
+                pass # message which has been forwarded already
             elif single_msg['message_type'] == HELLO_MESSAGE: 
                 self.hello_message_handler.forwardMessage(single_msg)
             elif single_msg['message_type'] == TC_MESSAGE:
@@ -331,11 +384,11 @@ class OLSRManager:
             if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], \
                 single_msg['message_seq_num'], True):
                 if self.duplicated_set.checkExist_iface(dest_addr) is False:
-                    self.packet_forwarder.sendMsg(single_msg, dest_addr)
+                    pass # for further consideration
                 else:
                     return
             else:
-                self.packet_forwarder.sendMsg(single_msg, dest_addr)
+                pass # for further consideration
             
         # further process for forwarding
         will_retransmit = False
@@ -354,20 +407,8 @@ class OLSRManager:
         if will_retransmit:
             single_msg['ttl'] -= 1
             single_msg['Hop_count'] += 1
-            self.transmit_queue.put(single_msg)
-                                
-    def transmit(self):
-        while True:
-            if not self.transmit_queue.empty():
-                self.transmit_single(self.transmit_queue.get())
-                
-    def transmit_single(self, single_message):
-        single_packet = PacketHeader().attatchHeader(single_message)
-        dest_ip = self.route_table.getBridge()
-        self.sender(single_packet)
-
-
-
+            self.packet_forwarder.transmit_queue.put(single_msg) # todo : 해결되도록!
+            
 if __name__ == '__main__':
     '''
     test code for package

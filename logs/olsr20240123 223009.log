@@ -1,0 +1,7 @@
+2024-01-23 22:30:09,322 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-23 22:30:09,325 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-23 22:30:09,334 - node - INFO - init complete
+2024-01-23 22:30:09,489 - node - WARNING - packet with out TCP or UDP
+2024-01-23 22:30:09,492 - node - WARNING - packet with out TCP or UDP
+2024-01-23 22:30:09,784 - node - WARNING - packet with out TCP or UDP
+2024-01-23 22:30:09,786 - node - WARNING - packet with out TCP or UDP

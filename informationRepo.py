@@ -3,6 +3,7 @@ import time
 import threading
 from typing import Any
 import asyncio
+import time
 from constants import *
 
 class InterfaceAssociation:
@@ -58,8 +59,8 @@ class LinkSet:
         self.tupleList = [] #linkSetTuple
         
     async def run(self): # 일정 시간이 지나면 tuple 삭제
-        for i, tuple in enumerate(self.tuple):
-            if self.tupleList.checkExpired():
+        for i, single_tuple in enumerate(self.tupleList):
+            if self.tupleList.checkExpired(single_tuple):
                 self.tupleList.pop(i)
                 print(f'tuple deleted {i}')
         
@@ -118,8 +119,7 @@ class NeighborSet:
     def checkwill(self, addr):
         for i in self.neighborTuple:
             if i[0] == addr:
-                return i[2]
-            
+                return i[2]    
         return
     
     def delTuple(self, index):
@@ -325,7 +325,7 @@ class DuplicatedSet:
                 else:
                     return i
         
-        return -1
+        return False
     
     def checkExist_iface(self, ip_address, check_retransmit=False):
         for i, single_tuple in enumerate(self.dTupleList):
@@ -357,6 +357,9 @@ class DuplicatedSet:
         if time.time() - addtime > 1: # time has to be checked 
             return True
         return False  
+    
+    def getIfaceLst(self, idx):
+        return self.dTupleList[idx][3]
 
 class TimeOutManager(threading.Thread):
     '''
@@ -364,14 +367,17 @@ class TimeOutManager(threading.Thread):
     '''
     def __init__(self):
         super().__init__()
-        self.repository = []
+        self.repository = []    
         
     def run(self):
         for single_repo in self.repository:
             asyncio.run(single_repo.run())
-    
-    def addRepository(self, repo):
-        self.repository.append(repo)
+
+        time.sleep(1)
+
+    def addRepository(self, repo_lst):
+        for repo in repo_lst:
+            self.repository.append(repo)
     
 class RouteTable:
     def __init__(self) -> None:
@@ -415,6 +421,52 @@ class RouteTable:
             
         return False
     
+    def getDestExcept(self, ip_addr):
+        bridge_addr = []
+        for route in self.route_table:
+            if route['R_next_addr'] != ip_addr:
+                bridge_addr.append(route['R_dest_addr'])
+                
+        return bridge_addr    
+    
+    def updateTuple(self, idx, R_dest_addr=None, R_next_addr=None, R_dist=None,\
+        R_iface_addr=None):
+        original = self.route_table[idx]
+        self.route_table[idx] = {            
+            'R_dest_addr' : R_dest_addr if R_dest_addr is not None else original['R_dest_addr'],
+            'R_next_addr' : R_next_addr if R_next_addr is not None else original['R_next_addr'],
+            'R_dist' : R_dist if R_dist is not None else original['R_dist'],
+            'R_iface_addr' : R_iface_addr if R_iface_addr is not None else original['R_iface_addr'],
+        }
+    
+            
+class ReachablitySet():
+    def __init__(self) -> None:
+        self.reachablity_tuple = []
+    
+    def addTuple(self, r_neighbor_addr, r_neighbor_move_status, r_neighbor_reachable_list):
+        self.reachablity_tuple.append({
+            'r_neighbor_addr' : r_neighbor_addr,
+            'r_neighbor_move_status' : r_neighbor_move_status, 
+            'r_neighbor_reachable_list' : r_neighbor_reachable_list
+        })
+    
+    def sortTuple(self):
+        self.reachablity_tuple.sort(key=lambda x: x['r_neighbor_move_status'], reverse=True)
+        self.reachablity_tuple.sort(key=lambda x: len(x['r_neighbor_reachable_list']), reverse=True)
+        
+    def getAllReachable(self):
+        all_reachable_list = []
+        for single_lst in self.reachablity_tuple:
+            all_reachable_list.extend(single_tuple for single_tuple in single_lst \
+                if single_tuple not in all_reachable_list)
+            
+        return all_reachable_list
+    
+    def getTuple(self):
+        return self.reachablity_tuple
+    
+        
 if __name__ == '__main__':
     # duplicated Set Test
     
