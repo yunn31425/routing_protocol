@@ -110,19 +110,15 @@ class PacketForwarder:
         self.interface_name = self.sender.getIfaceName()
         self.ip_address = self.sender.getIPAddr()
         
-        try:
-            self.enqueue_process = Process(target=self.enqueue)
-            self.enqueue_process.start() 
+        self.enqueue_process = Process(target=self.enqueue)
+        self.enqueue_process.start() 
+        
+        self.dequeue_process = Process(target=self.dequeue)
+        self.dequeue_process.start()
             
-            self.dequeue_process = Process(target=self.dequeue)
-            self.dequeue_process.start()
-                
-            self.transmit_process = Process(target=self.transmit)    
-            self.transmit_process.start()
-        except KeyboardInterrupt:            
-            self.dequeue_process.join()
-            self.enqueue_process.join()
-            self.transmit_process.join()
+        self.transmit_process = Process(target=self.transmit)    
+        self.transmit_process.start()
+
         
     def getIfaceName(self):
         return self.sender.getIfaceName()
@@ -132,7 +128,7 @@ class PacketForwarder:
         
     def enqueuing(self, packet):
         if Raw in packet:
-            print(packet[Raw].load)
+            #print(packet[Raw].load)
             if TCP in packet:        
                 self.packet_queue.put({
                     'payload' : packet[Raw].load,
@@ -184,12 +180,17 @@ class PacketForwarder:
                 if not self.packet_queue.empty():                
                     single_packet = self.packet_queue.get()
                     print(single_packet['src_IP'], '>>' ,single_packet['dst_IP'], 'dequeing')
-                    if single_packet['dst_port'] == 14568:
-                        print("olsr message")
-                        self.olsr_manager.packet_processing(single_packet)
-                    else:
-                        print("default")
+                    
+                    if single_packet['src_IP'] == self.ip_address:
                         self.default_packet_processing(single_packet)
+                        # 라우팅 테이블에 따라 라우팅
+                    elif single_packet['dst_IP'] == self.ip_address:                    
+                        if single_packet['dst_port'] == 14568:
+                            print("olsr message")
+                            self.olsr_manager.packet_processing(single_packet)
+                        else:
+                            print("default")
+                            self.default_packet_processing(single_packet)
         except KeyboardInterrupt:
             print("keyboard interrupt")
             self.logger.info('keyboard interrupt')
@@ -202,11 +203,12 @@ class PacketForwarder:
                 
     def transmit_single(self, single_message):
         single_packet = self.parent.attatchHeader(single_message)
-        dest_ip = self.route_table.getBridge()
+        dest_ip = self.olsr_manager.route_table.getBridge()
         self.sender(single_packet) 
     
     def default_packet_processing(self, single_packet):
-        pass
+        next_addr = self.olsr_manager.route_table.getNextAddr(single_packet['dst_IP'])
+        self.sender.sendMsg(single_packet['payload'], next_addr)
             
 class PacketHeader:
     '''
@@ -315,13 +317,13 @@ class OLSRManager:
         self.hello_message_handler = helloMessage(self, self.ip_address)    
         self.move_message_handler = MoveMessage(self)
         self.tc_message_handler = TCMessage(self) 
-        # self.move_message_handler = MoveMessage(self) only when real connection
-        
+            
         self.packet_forwarder = PacketForwarder(self)
         
         print("init complete")
         self.logger.info('init complete')
         
+        self.tc_message_handler.start()
         self.hello_message_handler.start()
         
     def packet_processing(self, packet):
@@ -352,8 +354,6 @@ class OLSRManager:
                 pass # not yet to process it
             elif single_msg['message_type'] == MOVE_MESSAGE:
                 self.move_message_handler.processMessage(single_msg, source_addr)
-            elif single_msg['message_type'] == RECALC_MESSAGE:
-                self.recalc_message_handler.processMessage(single_msg, source_addr)
             else:
                 print('unidenfitied message type')
                 self.logger.warning('unidenfitied message type : ', single_msg['message_type'])
@@ -372,8 +372,6 @@ class OLSRManager:
                 pass # not yet to forward it
             elif single_msg['message_type'] == MOVE_MESSAGE:
                 self.move_message_handler.processMessage(single_msg)
-            elif single_msg['message_type'] == RECALC_MESSAGE:
-                self.recalc_message_handler.forwardMessage(single_msg)
             else: # default forwawding
                 self.defaultForward(single_msg, source_addr, dest_addr)
 

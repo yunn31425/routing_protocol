@@ -438,7 +438,12 @@ class RouteTable:
             'R_dist' : R_dist if R_dist is not None else original['R_dist'],
             'R_iface_addr' : R_iface_addr if R_iface_addr is not None else original['R_iface_addr'],
         }
-    
+            
+    def getNextAddr(self, dest_addr):
+        for single_tuple in self.route_table:
+            if single_tuple['R_dest_addr'] == dest_addr:
+                return single_tuple['R_next_addr']
+        return False
             
 class ReachablitySet():
     def __init__(self) -> None:

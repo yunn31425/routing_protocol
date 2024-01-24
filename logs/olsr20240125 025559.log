@@ -1,0 +1,8 @@
+2024-01-25 02:55:59,050 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-25 02:56:04,135 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-25 02:56:04,154 - node - INFO - init complete
+2024-01-25 02:56:04,158 - node - INFO - broadcastb'\x00\x00\x00\x00\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 02:56:06,161 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 02:56:08,163 - node - INFO - broadcastb'\x00\x00\x00\x02\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 02:56:10,166 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 02:56:10,890 - node - INFO - keyboard interrupt

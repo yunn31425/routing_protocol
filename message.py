@@ -1,19 +1,18 @@
 from collections.abc import Callable, Iterable, Mapping
 import threading
-from typing import Any
 from constants import *
 import time
 import struct
 from gps_interface import *
 from multiprocessing import Process, Manager, Queue
-import geopy.distance
+from geopy.distance import distance
+from math import sqrt
 import time
 
 def decode_validTime(valid_time):
     '''
     decode vaild time from binary to integer
     '''
-            
     mantissa = (valid_time >> 4) & 0x0f
     exponent = valid_time & 0x0f
     
@@ -80,7 +79,6 @@ class helloMessage(threading.Thread):
         pack hello message
         '''
         packet_format = '!HBB'
-        print(encode_validTime(HELLO_INTERVAL))
         packed_data = struct.pack(packet_format,
                                     RESERVED,             # 0, 16bits
                                     encode_validTime(HELLO_INTERVAL),     # Htime 8bits # mentissa needtobecheck
@@ -105,7 +103,7 @@ class helloMessage(threading.Thread):
             )
         asyncio.run(self.parent.sender.broadcastMsg(packed_packet))
     
-    def unpackMessage(self, packed_data): # function need to be checked
+    def unpackMessage(self, packed_data):
         '''
         HBB : RESERVED, Htime, willingness
         BBHI : Link Code, RESERVED, Link Message Size, Neighbor interface address...
@@ -115,8 +113,7 @@ class helloMessage(threading.Thread):
         unpacked_data = [_ for _ in range(int(message_size/2))]
         for i in range(int(message_size/2)):
             unpacked_data[i] = list(struct.unpack_from('!BBH', packed_data, offset=4+i*8))
-            unpacked_data[i] += list(struct.unpack_from(f'!I', packed_data, offset=8+i*8)) # need to be checked
-            
+            unpacked_data[i] += list(struct.unpack_from(f'!I', packed_data, offset=8+i*8))
             
         return Htime, will_value, unpacked_data
 
@@ -146,7 +143,6 @@ class helloMessage(threading.Thread):
                 # need to be checked ASYM_TIME value?
                 self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
             else:
-                print(link_tuple_exist, self.parent.link_set.getTuple())
                 self.parent.link_set.updateTuple(link_tuple_exist, None, None, None, time.time() + single_packet['vtime'], None)
                 if self.ip_address == unpacked_data[4]:
                     if unpacked_data[1] == LOST_LINK:
@@ -232,6 +228,7 @@ class TCMessage(threading.Thread):
         -> 라우팅을 위한 경로 전송
     '''
     def __init__(self, parent) -> None:
+        super().__init__()
         self.last_msg_trans_time = 0
         self.last_message_sequence = 0 # 링크 추가 및 삭제시 증가 구현 todo
         self.parent = parent
@@ -240,6 +237,8 @@ class TCMessage(threading.Thread):
         while True:
             if self.last_msg_trans_time - time.time() > TC_INTERVAL:
                 self.generateMessage()
+            else:
+                time.sleep(TC_INTERVAL/1.2)
     
     def packMessage(self, ansn, adversized_nei_addr):
         '''
@@ -342,7 +341,7 @@ class MoveMessage(threading.Thread):
     '''
     
     def __init__(self, parent) -> None:
-        self.gps_handler = GPSReceiver()
+        self.gps_handler = GPSReceiver(parent.logger)
         self.check_time_prev = 0
         self.longitude_prev = None
         self.latitude_prev = None
@@ -356,18 +355,6 @@ class MoveMessage(threading.Thread):
         self.monitoring_process = Process(target=self.monitorVelocity)
         
         self.monitoring_process.start()        
-        
-    def getSpeed(self, longitude_prev, latitude_prev, longitude_cur, latitude_cur):
-        '''
-        not be used
-        '''
-        coords_prev = (latitude_prev, longitude_prev)
-        coords_cur = (latitude_cur, longitude_cur)
-
-        distance = geopy.distance.distance(coords_prev, coords_cur).meters
-        speed = distance / VELO_CHECK_PERIOD
-                    
-        return speed
     
     def monitorVelocity(self):
         while True:
@@ -380,7 +367,6 @@ class MoveMessage(threading.Thread):
                         time.sleep(MOVE_INTERVAL)
                         necessary_neighbor = self.calcNecessaryNeighbor()
                         self.broadcastRecalc(necessary_neighbor)
-                    
                 
     def broadcastMoveMsg(self):        
         message_contents = self.packMessageMoving(MOVE_MOVE_NODE, self.gps_handler.getVelocity(), \
@@ -391,15 +377,22 @@ class MoveMessage(threading.Thread):
         self.status = MOVE_MESSAGE_SENT_STATE
         
     def broadcastRecalc(self, necessary_neighbor):
-        message_contents = self.packMessageRecv()
+        message_contents = self.packMessageRecv(necessary_neighbor, NODE_ROUTE_RECALC)
         packet_contents = self.parent.packet_header_handler.attatchHeader(
-            [RECALC_MESSAGE, TOP_HOLD_TIME, 255, self.msg_seq_num, message_contents])
+            [MOVE_MESSAGE, TOP_HOLD_TIME, 255, self.msg_seq_num, message_contents])
         self.sender.broadcastMsg(packet_contents)
         self.status = MOVE_DEFAULT_STATE
+    
+    def sendNodeMovement(self, interface_list, node_type, sent_interface_addr):
+        message_contents = self.packMessageRecv(interface_list, node_type)
+        packet_contents = self.parent.packet_header_handler.attatchHeader(
+            [MOVE_MESSAGE, TOP_HOLD_TIME, 255, self.msg_seq_num, message_contents])
         
-    def packMessageRecv(self, node_data, interface_addr):
+        asyncio.run(self.sender.sendMsg(packet_contents, sent_interface_addr))
+        
+    def packMessageRecv(self, interface_addr, node_type):
         packet_format1 = '!HH'
-        packed_data = struct.pack(packet_format1, NODE_ROUTE_RECALC, len(interface_addr)*4+8)
+        packed_data = struct.pack(packet_format1, node_type, len(interface_addr)*4+8)
         packed_data += encodeIPAddr(self.parent.sender.getIPAddr())
         for addr in interface_addr:
             packed_data += encodeIPAddr(addr)
@@ -407,6 +400,9 @@ class MoveMessage(threading.Thread):
         return packed_data    
 
     def packMessageMoving(self, nodeType, velocity, coordinate):
+        '''
+        message send by moving node
+        '''
         packet_format1 = '!HH'
         packet_format2 = '!eeeeee'
         packed_data = struct.pack(packet_format1, nodeType, 20)
@@ -415,6 +411,18 @@ class MoveMessage(threading.Thread):
             coordinate['latitude_deg'], coordinate['absolute_altitude_m'], velocity['north_m_s'],\
                 velocity['east_m_s'], velocity['down_m_s'])
         return packed_data
+    
+    def calcRelativeVel(self, nodedata):
+        '''
+        check if this node and moving node is getting closer or away
+        '''
+        cur_velosity = self.gps_handler.getVelocity()
+        
+        relative_velocity = sqrt((cur_velosity['north_m_s'] - nodedata['north_m_s'])**2 +
+                            (cur_velosity['east_m_s'] - nodedata['east_m_s'])**2 +
+                            (cur_velosity['down_m_s'] - nodedata['down_m_s'])**2)
+        
+        return MOVE_CLOSE_NODE if relative_velocity > -1 else MOVE_AWAY_NODE
     
     def unpackMessage(self, binary_data):
         packet_format = '!HHI'
@@ -484,7 +492,9 @@ class MoveMessage(threading.Thread):
         if message_type == NODE_ROUTE_RECALC:
             self.routeRecalc(node_data, sent_interface_addr)
         elif  message_type == MOVE_MOVE_NODE:
-            self.packMessageRecv(node_data, sent_interface_addr)
+            node_type = self.calcRelativeVel(node_data)
+            interface_list = self.parent.getDestExcept(sent_interface_addr)
+            self.sendNodeMovement(interface_list, node_type, sent_interface_addr)
         elif self.status == MOVE_MESSAGE_SENT_STATE: 
            self.parent.reachable_set.addTuple(sent_interface_addr, message_type, node_data)
         

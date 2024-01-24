@@ -22,4 +22,4 @@ def encode_8float(coord_float):
     return Htime
 
 print(encode_8float(37.234246))
-print(float(float(37.234246).hex()))
+print(float(37.234246).hex())

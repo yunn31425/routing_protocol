@@ -11,8 +11,9 @@ class GPSReceiver:
     '''
     get gps coordinate and velocity from pixhawk
     '''
-    def __init__(self):
+    def __init__(self, logger):
         super().__init__()
+        self.logger = logger
         self.gps_available = False
         self.drone = None
         self.gps_status = None
@@ -24,6 +25,7 @@ class GPSReceiver:
         self.gps_status = False
         self.drone = System()
         try:
+            print("initializing gps")
             task = asyncio.create_task(self.drone.connect(system_address=PIXHAWK_DIRECTORY))
             await asyncio.wait_for(task, timeout=5)
         except asyncio.TimeoutError:

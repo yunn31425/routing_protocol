@@ -1,0 +1,13 @@
+2024-01-25 03:32:51,853 - node - INFO - Sender init complete. addr : 192.168.0.169
+2024-01-25 03:32:56,936 - node - INFO - Sender init complete. addr : 192.168.0.169
+2024-01-25 03:32:56,956 - node - INFO - init complete
+2024-01-25 03:32:56,980 - node - INFO - broadcastb'\x00\x00\x00\x00\x01\x05\x00\x04\xc0\xa8\x00\xa9\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 03:32:58,970 - node - WARNING - packet with out Raw
+2024-01-25 03:32:58,972 - node - WARNING - packet with out Raw
+2024-01-25 03:32:58,980 - node - WARNING - packet with out Raw
+2024-01-25 03:32:58,982 - node - WARNING - packet with out Raw
+2024-01-25 03:32:58,983 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\xa9\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 03:32:58,984 - node - WARNING - packet with out Raw
+2024-01-25 03:32:58,989 - node - WARNING - packet with out Raw
+2024-01-25 03:32:59,184 - node - WARNING - packet with out Raw
+2024-01-25 03:32:59,186 - node - WARNING - packet with out Raw
