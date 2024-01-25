@@ -102,6 +102,7 @@ class helloMessage(threading.Thread):
         packed_packet = self.parent.packet_header_handler.attatchHeader(
             [HELLO_MESSAGE, encode_validTime(HELLO_INTERVAL), 1, self.seq_num, packed_data]
             )
+        self.seq_num += 1
         asyncio.run(self.parent.sender.broadcastMsg(packed_packet))
     
     def unpackMessage(self, packed_data):

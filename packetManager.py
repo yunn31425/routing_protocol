@@ -266,7 +266,7 @@ class PacketHeader:
         
         print('packet_length', packet_length, message_size)
         self.packet_seqence_num += 1
-        print(packet_contents)
+        print('packet_contents', packet_contents)
         return packet_contents
             
     def detatchHeader(self, binary_packet):
