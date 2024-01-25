@@ -1,0 +1,36 @@
+2024-01-25 14:10:02,616 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-25 14:10:07,718 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-25 14:10:07,737 - node - INFO - init complete
+2024-01-25 14:10:07,744 - node - INFO - broadcastb'\x00\x00\x00\x00\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:09,747 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:11,751 - node - INFO - broadcastb'\x00\x00\x00\x02\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:13,754 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:15,757 - node - INFO - broadcastb'\x00\x00\x00\x04\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:17,760 - node - INFO - broadcastb'\x00\x00\x00\x05\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:19,764 - node - INFO - broadcastb'\x00\x00\x00\x06\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:21,767 - node - INFO - broadcastb'\x00\x00\x00\x07\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:23,769 - node - INFO - broadcastb'\x00\x00\x00\x08\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 14:10:24,755 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,757 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,758 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,760 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,761 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,762 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,764 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,765 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,766 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,767 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,769 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,770 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,771 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,772 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,774 - node - WARNING - packet with out Raw
+2024-01-25 14:10:24,775 - node - WARNING - packet with out Raw
+2024-01-25 14:10:25,772 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:39,510 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:41,514 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:43,519 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:45,523 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:47,529 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:49,532 - node - ERROR - broadcast failed : 101
+2024-01-25 15:05:51,537 - node - ERROR - broadcast failed : 101

@@ -70,6 +70,7 @@ class helloMessage(threading.Thread):
         while True:
             if time.time() - self.last_emission_time > HELLO_INTERVAL:
                 self.last_emission_time = time.time()
+                print('hello message emitted')
                 self.packMessage()
             else:
                 time.sleep(HELLO_INTERVAL/2)
@@ -229,16 +230,19 @@ class TCMessage(threading.Thread):
     '''
     def __init__(self, parent) -> None:
         super().__init__()
+        self.name = 'tc_message_handler'    
         self.last_msg_trans_time = 0
         self.last_message_sequence = 0 # 링크 추가 및 삭제시 증가 구현 todo
         self.parent = parent
         
     def run(self) -> None:
         while True:
-            if self.last_msg_trans_time - time.time() > TC_INTERVAL:
+            if time.time() - self.last_msg_trans_time > TC_INTERVAL:
+                self.last_msg_trans_time = time.time()
+                print('TCMessage emitted')
                 self.generateMessage()
             else:
-                time.sleep(TC_INTERVAL/1.2)
+                time.sleep(TC_INTERVAL/2)
     
     def packMessage(self, ansn, adversized_nei_addr):
         '''
@@ -268,8 +272,10 @@ class TCMessage(threading.Thread):
         for addr in self.parent.neighbor_set.getTuple():
             address.append(addr[0])
         packed_message = self.packMessage(self.last_message_sequence, address)
-        packet_packet = self.parent.packet_header_handler(packed_message)
-        self.parent.sender(packet_packet)
+        packet_packet = self.parent.packet_header_handler.attatchHeader(
+            [TC_MESSAGE, TOP_HOLD_TIME, 255, self.last_message_sequence, packed_message])
+        asyncio.run(self.parent.sender.SendToMPR(packet_packet))
+        self.last_message_sequence += 1
     
     def forwardMessage(self):
         '''

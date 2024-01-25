@@ -1,0 +1,15 @@
+2024-01-25 22:12:19,613 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-25 22:12:21,659 - node - INFO - Sender init complete. addr : 127.0.0.1
+2024-01-25 22:12:21,673 - node - INFO - init complete
+2024-01-25 22:12:21,679 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 22:12:22,852 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,854 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,855 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,856 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,890 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,892 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,900 - node - WARNING - packet with out Raw
+2024-01-25 22:12:22,902 - node - WARNING - packet with out Raw
+2024-01-25 22:12:23,682 - node - INFO - broadcastb'\x00\x00\x00\x02\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 22:12:25,685 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\x7f\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 22:12:27,024 - node - INFO - keyboard interrupt

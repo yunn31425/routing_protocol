@@ -1,0 +1,29 @@
+2024-01-25 23:06:56,410 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:06:58,468 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:06:58,486 - node - INFO - init complete
+2024-01-25 23:06:58,495 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:58,744 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:06:58,782 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:06:59,290 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:00,383 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:00,422 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:00,498 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:07:00,499 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:02,510 - node - INFO - broadcastb'\x00\x00\x00\x05\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:07:02,512 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:03,285 - node - WARNING - packet with out Raw
+2024-01-25 23:07:03,623 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:03,670 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:04,206 - node - WARNING - packet with out Raw
+2024-01-25 23:07:04,514 - node - INFO - broadcastb'\x00\x00\x00\x07\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:07:04,515 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:04,820 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:04,905 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:05,025 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:05,026 - node - WARNING - packet with out Raw
+2024-01-25 23:07:05,091 - node - WARNING - packet with out Raw
+2024-01-25 23:07:05,174 - node - WARNING - packet with out Raw
+2024-01-25 23:07:05,434 - node - WARNING - packet with out Raw
+2024-01-25 23:07:06,517 - node - INFO - broadcastb'\x00\x00\x00\t\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:07:06,518 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:07:07,938 - node - INFO - keyboard interrupt

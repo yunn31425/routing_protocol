@@ -16,10 +16,6 @@ from olsr_logger import *
 
 class Sender:
     '''
-    todo 소켓 리셋 sender에 넣기 -> broadcaste r가 아니라 
-    별도의 queue 꾸릴 것
-    '''
-    '''
     send message and packets
     '''
     def __init__(self, parent) -> None:
@@ -30,13 +26,10 @@ class Sender:
         except IndexError:
             print("interface name must be entered... (e.g wlp1s0)")
             sys.exit()
-        # if len(sys.argv) == 1:e
-        #     print("enter network interface name")
-        #     sys.exit()        
-        # # check if network mode is ad-hoc not managed
-        # if (subprocess.run('iwconfig | grep Mode', shell=True, capture_output=True, text=True).stdout).split(' ')[10] == "Mode:Managed":
-        #     print("change mode into ad-hoc first")
-        #     sys.exit()
+  
+        # check if network mode is ad-hoc not managed
+        if (subprocess.run('iwconfig | grep Mode', shell=True, capture_output=True, text=True).stdout).split(' ')[10] == "Mode:Managed":
+            print("change mode into ad-hoc first")
             
         try:
             SendSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -72,7 +65,7 @@ class Sender:
         '''
         try:
             with socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW) as sock:
-                sock.sendto(single_mssage, (dest_addr, 0))
+                sock.sendto(single_mssage, (dest_addr, 14567))
         except OSError as e:
             self.logger.error(f'send failed : {e.errno}')
     
@@ -85,6 +78,14 @@ class Sender:
         except OSError as e:
             print(e.errno)
             self.logger.error(f'broadcast failed : {e.errno}')
+            
+    async def SendToMPR(self, packed_message):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW) as sock:
+                for dest_addr in self.parent.mprSelector_set.getMPRAddr():
+                    sock.sendto(packed_message, (dest_addr, 14567))
+        except OSError as e:
+            self.logger.error(f'send failed : {e.errno}')
 
     def getIfaceName(self):
         return self.interface_name
@@ -128,7 +129,8 @@ class PacketForwarder:
         
     def enqueuing(self, packet):
         if Raw in packet:
-            #print(packet[Raw].load)
+            #print('packet enqueued', packet[Raw].load)
+            self.logger.info('packet enqueued {packet[Raw].load}')
             if TCP in packet:        
                 self.packet_queue.put({
                     'payload' : packet[Raw].load,
@@ -155,10 +157,14 @@ class PacketForwarder:
         # if queue size overflow, control willingness
         if self.packet_queue.qsize() > MAX_QUEUE_LENGTH:
             self.olsr_manager.hello_message_handler.willingness = WILL_NEVER
+            self.logger.info("packet queue overflow, willingness -> WILL_NEVER")
+            print("packet queue overflow, willingness -> WILL_NEVER")
         
         if self.olsr_manager.hello_message_handler.willingness == WILL_NEVER:
             if self.packet_queue.qsize() < MAX_QUEUE_LENGTH/1.2:
                 self.olsr_manager.hello_message_handler.willingness == WILL_DEFAULT
+                self.logger.info("packet queue overflow solved, willingness -> WILL_DEFAULT")
+                print("packet queue overflow solved, willingness -> WILL_DEFAULT")
          
         ##print(packet.summary(), 'dequeing', self.packet_queue.qsize())
             
@@ -177,15 +183,18 @@ class PacketForwarder:
         '''
         try:            
             while True:
-                if not self.packet_queue.empty():                
+                if not self.packet_queue.empty():
+                    print("packet dequeued")
                     single_packet = self.packet_queue.get()
                     print(single_packet['src_IP'], '>>' ,single_packet['dst_IP'], 'dequeing')
                     
                     if single_packet['src_IP'] == self.ip_address:
+                        print("emited by this node")
                         self.default_packet_processing(single_packet)
                         # 라우팅 테이블에 따라 라우팅
-                    elif single_packet['dst_IP'] == self.ip_address:                    
-                        if single_packet['dst_port'] == 14568:
+                    elif single_packet['dst_IP'] in [self.ip_address,BROADCAST_ADDR]:
+                        print("into this node")
+                        if single_packet['dst_port'] == 14567:
                             print("olsr message")
                             self.olsr_manager.packet_processing(single_packet)
                         else:
@@ -212,7 +221,6 @@ class PacketForwarder:
             self.sender.sendMsg(single_packet['payload'], next_addr)
         else:
             self.olsr_manager.unreach_queue.putQueue(single_packet['dst_IP'], single_packet['payload'])
-            
 class PacketHeader:
     '''
     packet header for olsr protocol
@@ -243,12 +251,7 @@ class PacketHeader:
         
         message_size = len(message_contents[4])
             
-        packet_contents = struct.pack('!HHBBH', 
-                                        packet_length,
-                                        self.packet_seqence_num,
-                                        message_contents[0],         # message_type
-                                        message_contents[1],         # vtime
-                                        message_size)
+        
         packet_contents += encodeIPAddr(self.node_ip)  # originator_address
         packet_contents += struct.pack("!BBH",
                                         message_contents[2],         # time to live
@@ -256,6 +259,12 @@ class PacketHeader:
                                         message_contents[3])         # message_seq_num
         packet_contents += message_contents[4]
         packet_length += message_size + 4*3
+        packet_contents = struct.pack('!HHBBH', 
+                                        packet_length,
+                                        self.packet_seqence_num,
+                                        message_contents[0],         # message_type
+                                        message_contents[1],         # vtime
+                                        message_size) + packet_contents
 
         self.packet_seqence_num += 1
         print(packet_contents)
@@ -266,6 +275,7 @@ class PacketHeader:
         packet_seq_num = struct.unpack_from('!H', binary_packet, 2)[0]
         message_contents = []
         message_offset = 4
+        print('packet_length', packet_length)
         if packet_length == 4:
             return 
         while packet_length - message_offset > 0:
@@ -333,10 +343,13 @@ class OLSRManager:
         
     def packet_processing(self, packet):
         if len(packet['payload']) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
+            print("header only")
             return
+        print("payload", packet['payload'])
         seq_num, message_contents = self.packet_header_handler.detatchHeader(packet['payload'])
         source_addr = packet['src_IP']
         dest_addr = packet['dst_IP']
+        print(message_contents)
         for single_msg in message_contents:
             if single_msg['ttl'] < 2: # need to be checked
                 print("no processing")
@@ -348,7 +361,7 @@ class OLSRManager:
                 pass # already processed message
             # process message 
             elif single_msg['message_type'] == HELLO_MESSAGE:
-                print("hello message")
+                print("hello message received")
                 self.logger.debug('hello message from : ' + source_addr)
                 self.hello_message_handler.processMessage(single_msg, source_addr)
             elif single_msg['message_type'] == TC_MESSAGE:

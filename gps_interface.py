@@ -4,6 +4,7 @@ from mavsdk import System
 import asyncio
 import threading
 from math import *
+from olsr_logger import *
 
 PIXHAWK_DIRECTORY = "serial:///dev/ttyACM0"
 
@@ -27,16 +28,19 @@ class GPSReceiver:
         try:
             print("initializing gps")
             task = asyncio.create_task(self.drone.connect(system_address=PIXHAWK_DIRECTORY))
-            await asyncio.wait_for(task, timeout=5)
+            await asyncio.wait_for(task, timeout=2)
         except asyncio.TimeoutError:
             print("fail to initiate GPS receiver")
         else:
             self.gps_status = True
+            self.gps_available = True
+            print('init complete')
         
-    async def getGps(self):        
+    def getGps(self):        
         try:
-            async for telemetry in self.drone.telemetry.position_velocity_ned():
+            for telemetry in self.drone.telemetry.position_velocity_ned():
                 self.position = telemetry.position
+                print(telemetry.position)
                 self.velocity = telemetry.velocity
                 break
         except Exception:
@@ -74,3 +78,8 @@ class GPSReceiver:
         
     def status(self):
         return self.status
+    
+if __name__ == '__main__':
+    
+    gps_receiver = GPSReceiver(None)
+    print(gps_receiver.getCoordinate())

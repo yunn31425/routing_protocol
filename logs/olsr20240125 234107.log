@@ -1,0 +1,63 @@
+2024-01-25 23:41:07,496 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:41:09,550 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:41:09,570 - node - INFO - init complete
+2024-01-25 23:41:09,586 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:09,587 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:41:09,669 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:09,704 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:10,246 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:10,860 - node - WARNING - packet with out Raw
+2024-01-25 23:41:10,867 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:10,927 - node - WARNING - packet with out Raw
+2024-01-25 23:41:10,929 - node - WARNING - packet with out Raw
+2024-01-25 23:41:10,974 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:11,166 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:11,590 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:41:11,594 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:12,086 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:13,010 - node - WARNING - packet with out Raw
+2024-01-25 23:41:13,050 - node - WARNING - packet with out Raw
+2024-01-25 23:41:13,593 - node - INFO - broadcastb'\x00\x00\x00\x05\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:41:13,594 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:14,235 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:14,750 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:14,764 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:15,566 - node - WARNING - packet with out Raw
+2024-01-25 23:41:15,596 - node - INFO - broadcastb'\x00\x00\x00\x07\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:41:15,598 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:15,834 - node - WARNING - packet with out Raw
+2024-01-25 23:41:15,836 - node - WARNING - packet with out Raw
+2024-01-25 23:41:15,870 - node - WARNING - packet with out Raw
+2024-01-25 23:41:15,870 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,080 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,081 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,082 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,083 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,285 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,286 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,291 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,292 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,293 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,306 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,402 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,463 - node - WARNING - packet with out Raw
+2024-01-25 23:41:16,499 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,499 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:16,534 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,534 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:16,570 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,570 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:16,798 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,798 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:16,799 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,799 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:16,800 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:16,800 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:17,526 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:17,526 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:17,527 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:17,527 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:41:17,598 - node - INFO - broadcastb'\x00\x00\x00\t\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:41:17,600 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:18,231 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-25 23:41:18,339 - node - INFO - keyboard interrupt

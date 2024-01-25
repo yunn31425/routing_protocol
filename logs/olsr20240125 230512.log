@@ -1,0 +1,248 @@
+2024-01-25 23:05:12,952 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:05:15,009 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:05:15,032 - node - INFO - init complete
+2024-01-25 23:05:15,036 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:15,257 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:15,260 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:15,262 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:17,039 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:18,215 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:18,217 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:18,585 - node - WARNING - packet with out Raw
+2024-01-25 23:05:18,670 - node - WARNING - packet with out Raw
+2024-01-25 23:05:19,035 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:19,041 - node - INFO - broadcastb'\x00\x00\x00\x05\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:19,240 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:21,044 - node - INFO - broadcastb'\x00\x00\x00\x07\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:22,610 - node - WARNING - packet with out Raw
+2024-01-25 23:05:22,926 - node - WARNING - packet with out Raw
+2024-01-25 23:05:23,047 - node - INFO - broadcastb'\x00\x00\x00\t\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:25,051 - node - INFO - broadcastb'\x00\x00\x00\x0b\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:27,053 - node - INFO - broadcastb'\x00\x00\x00\r\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:29,056 - node - INFO - broadcastb'\x00\x00\x00\x0f\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:29,069 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:29,078 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:30,197 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:30,199 - node - WARNING - packet with out Raw
+2024-01-25 23:05:30,200 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:31,061 - node - INFO - broadcastb'\x00\x00\x00\x11\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:31,118 - node - WARNING - packet with out Raw
+2024-01-25 23:05:31,426 - node - WARNING - packet with out Raw
+2024-01-25 23:05:33,065 - node - INFO - broadcastb'\x00\x00\x00\x13\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:33,133 - node - WARNING - packet with out Raw
+2024-01-25 23:05:33,371 - node - WARNING - packet with out Raw
+2024-01-25 23:05:34,641 - node - WARNING - packet with out Raw
+2024-01-25 23:05:34,644 - node - WARNING - packet with out Raw
+2024-01-25 23:05:34,898 - node - WARNING - packet with out Raw
+2024-01-25 23:05:34,956 - node - WARNING - packet with out Raw
+2024-01-25 23:05:35,074 - node - INFO - broadcastb'\x00\x00\x00\x15\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:37,077 - node - INFO - broadcastb'\x00\x00\x00\x17\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:39,080 - node - INFO - broadcastb'\x00\x00\x00\x19\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:40,337 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:40,338 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:41,082 - node - INFO - broadcastb'\x00\x00\x00\x1b\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:41,089 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:41,257 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:43,088 - node - INFO - broadcastb'\x00\x00\x00\x1d\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:44,756 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:44,854 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:45,048 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:45,090 - node - INFO - broadcastb'\x00\x00\x00\x1f\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:45,134 - node - WARNING - packet with out Raw
+2024-01-25 23:05:45,134 - node - WARNING - packet with out Raw
+2024-01-25 23:05:45,135 - node - WARNING - packet with out Raw
+2024-01-25 23:05:45,172 - node - WARNING - packet with out Raw
+2024-01-25 23:05:45,173 - node - WARNING - packet with out Raw
+2024-01-25 23:05:45,173 - node - WARNING - packet with out Raw
+2024-01-25 23:05:45,194 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:45,195 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:45,196 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:47,093 - node - INFO - broadcastb'\x00\x00\x00!\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:47,837 - node - WARNING - packet with out Raw
+2024-01-25 23:05:47,838 - node - WARNING - packet with out Raw
+2024-01-25 23:05:47,885 - node - WARNING - packet with out Raw
+2024-01-25 23:05:47,918 - node - WARNING - packet with out Raw
+2024-01-25 23:05:49,098 - node - INFO - broadcastb'\x00\x00\x00#\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:50,483 - node - WARNING - packet with out Raw
+2024-01-25 23:05:50,487 - node - WARNING - packet with out Raw
+2024-01-25 23:05:51,090 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:51,093 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:51,102 - node - INFO - broadcastb'\x00\x00\x00%\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:52,325 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:52,333 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:05:53,105 - node - INFO - broadcastb"\x00\x00\x00'\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03"
+2024-01-25 23:05:55,107 - node - INFO - broadcastb'\x00\x00\x00)\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:56,007 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,320 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,331 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,618 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,619 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,816 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,820 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,830 - node - WARNING - packet with out Raw
+2024-01-25 23:05:56,831 - node - WARNING - packet with out Raw
+2024-01-25 23:05:57,028 - node - WARNING - packet with out Raw
+2024-01-25 23:05:57,110 - node - INFO - broadcastb'\x00\x00\x00+\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:05:59,113 - node - INFO - broadcastb'\x00\x00\x00-\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:01,117 - node - INFO - broadcastb'\x00\x00\x00/\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:01,123 - node - WARNING - packet with out Raw
+2024-01-25 23:06:02,148 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:02,150 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:02,151 - node - WARNING - packet with out Raw
+2024-01-25 23:06:03,074 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:03,121 - node - INFO - broadcastb'\x00\x00\x001\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:03,188 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:05,124 - node - INFO - broadcastb'\x00\x00\x003\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:05,614 - node - WARNING - packet with out Raw
+2024-01-25 23:06:05,699 - node - WARNING - packet with out Raw
+2024-01-25 23:06:07,128 - node - INFO - broadcastb'\x00\x00\x005\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:07,950 - node - WARNING - packet with out Raw
+2024-01-25 23:06:08,292 - node - WARNING - packet with out Raw
+2024-01-25 23:06:09,130 - node - INFO - broadcastb'\x00\x00\x007\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:11,133 - node - INFO - broadcastb'\x00\x00\x009\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:12,185 - node - WARNING - packet with out Raw
+2024-01-25 23:06:12,194 - node - WARNING - packet with out Raw
+2024-01-25 23:06:12,195 - node - WARNING - packet with out Raw
+2024-01-25 23:06:12,198 - node - WARNING - packet with out Raw
+2024-01-25 23:06:12,492 - node - WARNING - packet with out Raw
+2024-01-25 23:06:12,798 - node - WARNING - packet with out Raw
+2024-01-25 23:06:13,106 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:13,107 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:13,136 - node - INFO - broadcastb'\x00\x00\x00;\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:14,131 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:14,195 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,053 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,086 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,142 - node - INFO - broadcastb'\x00\x00\x00=\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:15,155 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,193 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,196 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,197 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:15,237 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,241 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,286 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,296 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,298 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,327 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,328 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,563 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,564 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,740 - node - WARNING - packet with out Raw
+2024-01-25 23:06:15,897 - node - WARNING - packet with out Raw
+2024-01-25 23:06:16,075 - node - WARNING - packet with out Raw
+2024-01-25 23:06:16,078 - node - WARNING - packet with out Raw
+2024-01-25 23:06:16,080 - node - WARNING - packet with out Raw
+2024-01-25 23:06:16,281 - node - WARNING - packet with out Raw
+2024-01-25 23:06:17,145 - node - INFO - broadcastb'\x00\x00\x00?\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:18,023 - node - WARNING - packet with out Raw
+2024-01-25 23:06:18,024 - node - WARNING - packet with out Raw
+2024-01-25 23:06:18,025 - node - WARNING - packet with out Raw
+2024-01-25 23:06:18,025 - node - WARNING - packet with out Raw
+2024-01-25 23:06:18,534 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,003 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,005 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,036 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,049 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,051 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,090 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,091 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,149 - node - INFO - broadcastb'\x00\x00\x00A\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:19,251 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,252 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,459 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,665 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,865 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,867 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,868 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,950 - node - WARNING - packet with out Raw
+2024-01-25 23:06:19,958 - node - WARNING - packet with out Raw
+2024-01-25 23:06:20,022 - node - WARNING - packet with out Raw
+2024-01-25 23:06:20,023 - node - WARNING - packet with out Raw
+2024-01-25 23:06:20,175 - node - WARNING - packet with out Raw
+2024-01-25 23:06:21,157 - node - INFO - broadcastb'\x00\x00\x00C\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:22,629 - node - WARNING - packet with out Raw
+2024-01-25 23:06:22,630 - node - WARNING - packet with out Raw
+2024-01-25 23:06:22,631 - node - WARNING - packet with out Raw
+2024-01-25 23:06:22,746 - node - WARNING - packet with out Raw
+2024-01-25 23:06:23,161 - node - INFO - broadcastb'\x00\x00\x00E\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:24,166 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:24,167 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:24,677 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,678 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,777 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,855 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,856 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,900 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,902 - node - WARNING - packet with out Raw
+2024-01-25 23:06:24,904 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,022 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,065 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,066 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,111 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:25,164 - node - INFO - broadcastb'\x00\x00\x00G\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:25,201 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:25,233 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,504 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,506 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,507 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,702 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,710 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,717 - node - WARNING - packet with out Raw
+2024-01-25 23:06:25,906 - node - WARNING - packet with out Raw
+2024-01-25 23:06:27,167 - node - INFO - broadcastb'\x00\x00\x00I\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:29,170 - node - INFO - broadcastb'\x00\x00\x00K\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:30,924 - node - WARNING - packet with out Raw
+2024-01-25 23:06:30,925 - node - WARNING - packet with out Raw
+2024-01-25 23:06:31,173 - node - INFO - broadcastb'\x00\x00\x00M\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:31,538 - node - WARNING - packet with out Raw
+2024-01-25 23:06:31,649 - node - WARNING - packet with out Raw
+2024-01-25 23:06:32,156 - node - WARNING - packet with out Raw
+2024-01-25 23:06:33,176 - node - INFO - broadcastb'\x00\x00\x00O\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:33,179 - node - WARNING - packet with out Raw
+2024-01-25 23:06:35,178 - node - INFO - broadcastb'\x00\x00\x00Q\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:35,182 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:35,188 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:35,190 - node - WARNING - packet with out Raw
+2024-01-25 23:06:35,191 - node - WARNING - packet with out Raw
+2024-01-25 23:06:35,230 - node - WARNING - packet with out Raw
+2024-01-25 23:06:36,145 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:36,199 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:37,182 - node - INFO - broadcastb'\x00\x00\x00S\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:39,186 - node - INFO - broadcastb'\x00\x00\x00U\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:40,038 - node - WARNING - packet with out Raw
+2024-01-25 23:06:40,039 - node - WARNING - packet with out Raw
+2024-01-25 23:06:40,040 - node - WARNING - packet with out Raw
+2024-01-25 23:06:40,376 - node - WARNING - packet with out Raw
+2024-01-25 23:06:41,190 - node - INFO - broadcastb'\x00\x00\x00W\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:42,189 - node - WARNING - packet with out Raw
+2024-01-25 23:06:42,190 - node - WARNING - packet with out Raw
+2024-01-25 23:06:42,230 - node - WARNING - packet with out Raw
+2024-01-25 23:06:43,193 - node - INFO - broadcastb'\x00\x00\x00Y\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:44,853 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:44,907 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:44,955 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:45,196 - node - INFO - broadcastb'\x00\x00\x00[\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:45,199 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:45,200 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:45,202 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:46,245 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:46,247 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:46,489 - node - WARNING - packet with out Raw
+2024-01-25 23:06:46,490 - node - WARNING - packet with out Raw
+2024-01-25 23:06:46,514 - node - WARNING - packet with out Raw
+2024-01-25 23:06:46,899 - node - WARNING - packet with out Raw
+2024-01-25 23:06:47,200 - node - INFO - broadcastb'\x00\x00\x00]\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:47,216 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:47,219 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:06:49,202 - node - INFO - broadcastb'\x00\x00\x00_\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:50,488 - node - WARNING - packet with out Raw
+2024-01-25 23:06:50,490 - node - WARNING - packet with out Raw
+2024-01-25 23:06:50,526 - node - WARNING - packet with out Raw
+2024-01-25 23:06:50,702 - node - WARNING - packet with out Raw
+2024-01-25 23:06:50,784 - node - WARNING - packet with out Raw
+2024-01-25 23:06:51,205 - node - INFO - broadcastb'\x00\x00\x00a\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:06:52,888 - node - WARNING - packet with out Raw
+2024-01-25 23:06:52,890 - node - WARNING - packet with out Raw
+2024-01-25 23:06:52,890 - node - WARNING - packet with out Raw
+2024-01-25 23:06:52,891 - node - WARNING - packet with out Raw
+2024-01-25 23:06:52,901 - node - INFO - keyboard interrupt

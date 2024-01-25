@@ -1,0 +1,15 @@
+2024-01-25 23:04:05,757 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:04:07,813 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-25 23:04:07,832 - node - INFO - init complete
+2024-01-25 23:04:07,840 - node - INFO - broadcastb'\x00\x00\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:04:09,843 - node - INFO - broadcastb'\x00\x00\x00\x03\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:04:11,861 - node - INFO - broadcastb'\x00\x00\x00\x05\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-25 23:04:11,862 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:04:11,869 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:04:11,885 - node - WARNING - packet with out Raw
+2024-01-25 23:04:11,891 - node - WARNING - packet with out Raw
+2024-01-25 23:04:11,916 - node - WARNING - packet with out Raw
+2024-01-25 23:04:11,924 - node - WARNING - packet with out Raw
+2024-01-25 23:04:12,956 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:04:12,957 - node - WARNING - packet with out TCP or UDP
+2024-01-25 23:04:13,198 - node - WARNING - packet with out TCP or UDP

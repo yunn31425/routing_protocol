@@ -229,6 +229,9 @@ class MPRSelectorSet:
         if time.time() - addtime > 1: # time has to be checked 
             return True
         return False  
+    
+    def getMPRAddr(self):
+        return [addr[1] for addr in self.mprSelectorTuple]
       
 class TopologyInfo:
     '''
