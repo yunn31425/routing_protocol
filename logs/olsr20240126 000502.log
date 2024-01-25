@@ -1,0 +1,9 @@
+2024-01-26 00:05:02,202 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-26 00:05:04,259 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-26 00:05:04,277 - node - INFO - init complete
+2024-01-26 00:05:04,285 - node - INFO - broadcastb'\x00\x10\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-26 00:05:05,498 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:05:05,595 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:05:05,634 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:05:06,294 - node - INFO - broadcastb'\x00\x10\x00\x03\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-26 00:05:06,295 - node - INFO - packet enqueued {packet[Raw].load}

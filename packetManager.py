@@ -244,29 +244,26 @@ class PacketHeader:
     
     def attatchHeader(self, message_contents):
         packet_contents = b''
-        packet_length = 0
         print(message_contents)
         if len(message_contents[4]) == 0:
             return
         
         message_size = len(message_contents[4])
         print('message_size', message_size)
-            
-        
+        packet_length = message_size + 4*3
+        packet_contents = struct.pack('!HHBBH', 
+                                        packet_length,
+                                        self.packet_seqence_num,
+                                        message_contents[0],         # message_type
+                                        message_contents[1],         # vtime
+                                        message_size)
         packet_contents += encodeIPAddr(self.node_ip)  # originator_address
         packet_contents += struct.pack("!BBH",
                                         message_contents[2],         # time to live
                                         0,                  # hop_count
                                         message_contents[3])         # message_seq_num
         packet_contents += message_contents[4]
-        packet_length += message_size + 4*3
-        packet_contents = struct.pack('!HHBBH', 
-                                        packet_length,
-                                        self.packet_seqence_num,
-                                        message_contents[0],         # message_type
-                                        message_contents[1],         # vtime
-                                        message_size) + packet_contents
-
+        
         print('packet_length', packet_length, message_size)
         self.packet_seqence_num += 1
         print(packet_contents)
@@ -277,6 +274,7 @@ class PacketHeader:
         packet_seq_num = struct.unpack_from('!H', binary_packet, 2)[0]
         message_contents = []
         message_offset = 4
+        print(binary_packet)
         print('packet_length', packet_length)
         if packet_length == 4:
             return 
