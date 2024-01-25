@@ -4,6 +4,7 @@ import threading
 from typing import Any
 import asyncio
 import time
+import queue
 from constants import *
 
 class InterfaceAssociation:
@@ -470,6 +471,34 @@ class ReachablitySet():
     
     def getTuple(self):
         return self.reachablity_tuple
+
+class UnreachQueue(threading.Thread):
+    def __init__(self, parent):
+        super().__init__()
+        self.parent = parent
+        self.queue_list = {}
+        
+    def run(self):
+        for addr, single_queue in self.queue_list.items():
+            if self.parent.route_table.checkExistDest(addr):
+                self.sendQueue(addr, single_queue)
+                
+    def sendQueue(self, addr, single_queue : queue.Queue):
+        while not single_queue.empty():
+            asyncio.run(self.parent.sender.sendMsg(single_queue.get(), addr))
+            
+        
+    def addQueue(self, addr):
+        if addr not in self.queue_list.keys():
+            self.queue_list[addr] = queue.Queue()
+            
+    def putQueue(self, addr, message):
+        self.addQueue(addr)
+        self.queue_list[addr].put(message)
+        
+    
+    
+    
     
         
 if __name__ == '__main__':

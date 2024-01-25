@@ -208,7 +208,10 @@ class PacketForwarder:
     
     def default_packet_processing(self, single_packet):
         next_addr = self.olsr_manager.route_table.getNextAddr(single_packet['dst_IP'])
-        self.sender.sendMsg(single_packet['payload'], next_addr)
+        if next_addr:
+            self.sender.sendMsg(single_packet['payload'], next_addr)
+        else:
+            self.olsr_manager.unreach_queue.putQueue(single_packet['dst_IP'], single_packet['payload'])
             
 class PacketHeader:
     '''
@@ -317,6 +320,8 @@ class OLSRManager:
         self.hello_message_handler = helloMessage(self, self.ip_address)    
         self.move_message_handler = MoveMessage(self)
         self.tc_message_handler = TCMessage(self) 
+        
+        self.unreach_queue = UnreachQueue(self)
             
         self.packet_forwarder = PacketForwarder(self)
         
@@ -411,6 +416,3 @@ if __name__ == '__main__':
     '''
     test code for package
     '''
-    # step1
-    
-    # step2
