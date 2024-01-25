@@ -267,6 +267,7 @@ class PacketHeader:
         print('packet_length', packet_length, message_size)
         self.packet_seqence_num += 1
         print('packet_contents', packet_contents)
+        print('message_contents[4]', message_contents[4])
         return packet_contents
             
     def detatchHeader(self, binary_packet):
@@ -280,12 +281,12 @@ class PacketHeader:
             return 
         while packet_length - message_offset > 0:
             message_header = struct.unpack_from('!BBHIBBH', binary_packet, offset=message_offset)
-            message_size = message_header[-1]
-            message = binary_packet[message_offset + MSG_HEADER_SIZE : message_offset + MSG_HEADER_SIZE + message_size]
+            message_size = message_header[2]
+            message = binary_packet[message_offset + MSG_HEADER_SIZE : message_offset + message_size]
             #message = struct.unpack_from(f'I{message_size}', binary_packet, message_offset + MSG_HEADER_SIZE)
             message_contents.append({
                                         'message_type'      : message_header[0],
-                                        'vtime'             : decode_validTime(message_header[1]),
+                                        'vtime'             : message_header[1],
                                         'message_size'      : message_header[2],
                                         'originator_add'    : message_header[3],
                                         'ttl'               : message_header[4],
