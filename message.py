@@ -100,7 +100,7 @@ class helloMessage(threading.Thread):
                                         single_tuple._l_neighbor_iface_addr
                                         )                
         packed_packet = self.parent.packet_header_handler.attatchHeader(
-            [HELLO_MESSAGE, encode_validTime(HELLO_INTERVAL), 1, self.seq_num, packed_data]
+            [HELLO_MESSAGE, HELLO_INTERVAL, 1, self.seq_num, packed_data]
             )
         self.seq_num += 1
         asyncio.run(self.parent.sender.broadcastMsg(packed_packet))
@@ -111,12 +111,13 @@ class helloMessage(threading.Thread):
         BBHI : Link Code, RESERVED, Link Message Size, Neighbor interface address...
         '''
         _, Htime, will_value = struct.unpack_from('!HBB',packed_data, offset=0)
+        Htime = decode_validTime(Htime)
         message_size = int(len(packed_data)/4) - 1
         unpacked_data = [_ for _ in range(int(message_size/2))]
         for i in range(int(message_size/2)):
             unpacked_data[i] = list(struct.unpack_from('!BBH', packed_data, offset=4+i*8))
             unpacked_data[i] += list(struct.unpack_from(f'!I', packed_data, offset=8+i*8))
-            
+            unpacked_data[i] = unpacked_data[i]
         return Htime, will_value, unpacked_data
 
     def encodeLinkCode(self, neigh_type, link_type):
@@ -139,7 +140,7 @@ class helloMessage(threading.Thread):
         Htime, will_value, unpacked_data_lst = self.unpackMessage(single_packet['message'])
         
         for unpacked_data in unpacked_data_lst:
-            # process for link tuple
+            print("process for link tuple")
             link_tuple_exist = self.parent.link_set.checkExist(source_addr)
             if link_tuple_exist == False:
                 # need to be checked ASYM_TIME value?
@@ -462,7 +463,7 @@ class MoveMessage(threading.Thread):
         node_data, message_type, sent_interface_addr = self.unpackMessage(message)
         if message_type == NODE_ROUTE_RECALC:
             packed_packet = self.parent.packet_header_handler.attatchHeader(
-            [NODE_ROUTE_RECALC, encode_validTime(NODE_RECALC_INTERVAL), 1, self.seq_num, message]
+            [NODE_ROUTE_RECALC, NODE_RECALC_INTERVAL, 1, self.seq_num, message]
             )
             asyncio.run(self.parent.sender.broadcastMsg(packed_packet)) #todo
         else:
