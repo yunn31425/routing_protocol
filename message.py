@@ -16,7 +16,7 @@ def decode_validTime(valid_time):
     mantissa = (valid_time >> 4) & 0x0f
     exponent = valid_time & 0x0f
     
-    return C*(1+mantissa/16) * (2**exponent)
+    return int(C*(1+mantissa/16) * (2**exponent))
 
 def encode_validTime(emission_interval):
     '''
@@ -34,6 +34,7 @@ def encode_validTime(emission_interval):
     mantissa = int(((emission_interval / C) - 1) * 16)
     # Combine mantissa and exponent into Htime
     Htime = (mantissa << 4) | exponent
+    print('endcoded : ', Htime)
     return Htime
 
 def encodeIPAddr(ip_addr : str):

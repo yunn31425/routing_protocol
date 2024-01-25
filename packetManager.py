@@ -250,12 +250,12 @@ class PacketHeader:
         
         message_size = len(message_contents[4])
         print('message_size', message_size)
-        packet_length = message_size + 4*3
+        packet_length = message_size + 4*4
         packet_contents = struct.pack('!HHBBH', 
                                         packet_length,
                                         self.packet_seqence_num,
                                         message_contents[0],         # message_type
-                                        encode_validTime(message_contents[1]),         # vtime
+                                        message_contents[1],         # vtime
                                         message_size)
         packet_contents += encodeIPAddr(self.node_ip)  # originator_address
         packet_contents += struct.pack("!BBH",
