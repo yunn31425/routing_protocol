@@ -1,0 +1,12 @@
+2024-01-26 00:00:24,948 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-26 00:00:27,001 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-26 00:00:27,018 - node - INFO - init complete
+2024-01-26 00:00:27,025 - node - INFO - broadcastb'\x00\x10\x00\x01\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-26 00:00:27,341 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:00:27,383 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:00:28,983 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:00:29,013 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:00:29,028 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:00:29,028 - node - INFO - broadcastb'\x00\x10\x00\x03\x01\x05\x00\x04\xc0\xa8\x00\x06\x01\x00\x00\x00\x00\x00\x05\x03'
+2024-01-26 00:00:29,031 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 00:00:29,275 - node - INFO - keyboard interrupt

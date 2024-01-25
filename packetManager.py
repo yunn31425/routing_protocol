@@ -250,6 +250,7 @@ class PacketHeader:
             return
         
         message_size = len(message_contents[4])
+        print('message_size', message_size)
             
         
         packet_contents += encodeIPAddr(self.node_ip)  # originator_address
@@ -266,6 +267,7 @@ class PacketHeader:
                                         message_contents[1],         # vtime
                                         message_size) + packet_contents
 
+        print('packet_length', packet_length, message_size)
         self.packet_seqence_num += 1
         print(packet_contents)
         return packet_contents
