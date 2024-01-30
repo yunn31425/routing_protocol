@@ -101,7 +101,7 @@ class helloMessage(threading.Thread):
                                         single_tuple._l_neighbor_iface_addr
                                         )                
         packed_packet = self.parent.packet_header_handler.attatchHeader(
-            [HELLO_MESSAGE, HELLO_INTERVAL, 1, self.seq_num, packed_data]
+            [HELLO_MESSAGE, HELLO_INTERVAL, 2, self.seq_num, packed_data]
             )
         self.seq_num += 1
         asyncio.run(self.parent.sender.broadcastMsg(packed_packet))
@@ -118,7 +118,7 @@ class helloMessage(threading.Thread):
         for i in range(int(message_size/2)):
             unpacked_data[i] = list(struct.unpack_from('!BBH', packed_data, offset=4+i*8))
             unpacked_data[i] += list(struct.unpack_from(f'!I', packed_data, offset=8+i*8))
-            unpacked_data[i] = unpacked_data[i]
+            print("unpacked_data[i]", unpacked_data[i])
         return Htime, will_value, unpacked_data
 
     def encodeLinkCode(self, neigh_type, link_type):
@@ -139,12 +139,19 @@ class helloMessage(threading.Thread):
         link Tuple : (l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time)
         '''
         Htime, will_value, unpacked_data_lst = self.unpackMessage(single_packet['message'])
-        
+        print('unpacked_data_lst', unpacked_data_lst)
+        if unpacked_data_lst == []:
+            if self.parent.link_set.checkExist(source_addr) == False:
+                # need to be checked ASYM_TIME value?
+                print(singletuple for singletuple in self.parent.link_set.tupleList)
+                self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
+            
         for unpacked_data in unpacked_data_lst:
             print("process for link tuple")
             link_tuple_exist = self.parent.link_set.checkExist(source_addr)
             if link_tuple_exist == False:
                 # need to be checked ASYM_TIME value?
+                print(self.parent.link_set.tupleList)
                 self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
             else:
                 self.parent.link_set.updateTuple(link_tuple_exist, None, None, None, time.time() + single_packet['vtime'], None)
@@ -153,7 +160,7 @@ class helloMessage(threading.Thread):
                         self.parent.link_set.updateTuple(link_tuple_exist, None, None, time.time() - 1, None, None)
                     elif unpacked_data[1] == SYM_LINK or unpacked_data[1] == ASYM_LINK:
                         self.parent.link_set.updateTuple(link_tuple_exist, None, None, time.time() + single_packet['vtime'], None, time.time() + single_packet['vtime'] + NEIGHB_HOLD_TIME)
-                self.parent.link_set.lTimeMax(link_tuple_exist) # why?
+                self.parent.link_set.lTimeMax(link_tuple_exist) 
                 
             # process for neighbor_tuple
             neigh_tuple_exist = self.parent.neighbor_set.checkExist(source_addr)

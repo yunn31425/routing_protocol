@@ -249,6 +249,7 @@ class PacketHeader:
             return
         
         message_size = len(message_contents[4])
+        print(message_contents[4])
         print('message_size', message_size)
         packet_length = message_size + 4*4
         packet_contents = struct.pack('!HHBBH', 
@@ -282,7 +283,8 @@ class PacketHeader:
         while packet_length - message_offset > 0:
             message_header = struct.unpack_from('!BBHIBBH', binary_packet, offset=message_offset)
             message_size = message_header[2]
-            message = binary_packet[message_offset + MSG_HEADER_SIZE : message_offset + message_size]
+            message = binary_packet[message_offset + MSG_HEADER_SIZE : message_offset + MSG_HEADER_SIZE + message_size]
+            print(message_offset, MSG_HEADER_SIZE, message_size)
             #message = struct.unpack_from(f'I{message_size}', binary_packet, message_offset + MSG_HEADER_SIZE)
             message_contents.append({
                                         'message_type'      : message_header[0],

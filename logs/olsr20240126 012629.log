@@ -1,0 +1,17 @@
+2024-01-26 01:26:29,820 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-26 01:26:31,872 - node - INFO - Sender init complete. addr : 192.168.0.6
+2024-01-26 01:26:31,888 - node - INFO - init complete
+2024-01-26 01:26:31,893 - node - INFO - broadcastb'\x00\x14\x00\x01\x01\x02\x00\x04\xc0\xa8\x00\x06\x02\x00\x00\x00\x00\x00\x05\x03'
+2024-01-26 01:26:32,204 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:32,204 - node - WARNING - packet with out TCP or UDP
+2024-01-26 01:26:33,896 - node - INFO - broadcastb'\x00\x14\x00\x03\x01\x02\x00\x04\xc0\xa8\x00\x06\x02\x00\x00\x01\x00\x00\x05\x03'
+2024-01-26 01:26:33,897 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:33,941 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:34,123 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:34,124 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:34,125 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:34,454 - node - WARNING - packet with out Raw
+2024-01-26 01:26:34,456 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:34,457 - node - INFO - packet enqueued {packet[Raw].load}
+2024-01-26 01:26:34,762 - node - WARNING - packet with out Raw
+2024-01-26 01:26:35,784 - node - INFO - packet enqueued {packet[Raw].load}
