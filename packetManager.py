@@ -364,7 +364,7 @@ class OLSRManager:
                 pass # already processed message
             # process message 
             elif single_msg['message_type'] == HELLO_MESSAGE:
-                print("hello message received")
+                print("hello message received from " + source_addr)
                 self.logger.debug('hello message from : ' + source_addr)
                 self.hello_message_handler.processMessage(single_msg, source_addr)
             elif single_msg['message_type'] == TC_MESSAGE:

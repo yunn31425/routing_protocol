@@ -85,7 +85,7 @@ class helloMessage(threading.Thread):
                                     RESERVED,             # 0, 16bits
                                     encode_validTime(HELLO_INTERVAL),     # Htime 8bits # mentissa needtobecheck
                                     self.willingness)         # willingness default 8bits
-        packet_format = '!BBHI'
+        packet_format = '!BBHI'        
         for single_tuple in self.parent.link_set.getTuple():
             link_code = NOT_NEIGH
             if self.parent.mprSet.checkExist(single_tuple._l_neighbor_iface_addr):
@@ -98,8 +98,8 @@ class helloMessage(threading.Thread):
                                         link_code,
                                         RESERVED,
                                         link_message_size,
-                                        single_tuple._l_neighbor_iface_addr
-                                        )                
+                                        encodeIPAddr(single_tuple._l_neighbor_iface_addr)
+                                        )                  
         packed_packet = self.parent.packet_header_handler.attatchHeader(
             [HELLO_MESSAGE, HELLO_INTERVAL, 2, self.seq_num, packed_data]
             )
@@ -113,13 +113,19 @@ class helloMessage(threading.Thread):
         '''
         _, Htime, will_value = struct.unpack_from('!HBB',packed_data, offset=0)
         Htime = decode_validTime(Htime)
-        message_size = int(len(packed_data)/4) - 1
-        unpacked_data = [_ for _ in range(int(message_size/2))]
-        for i in range(int(message_size/2)):
-            unpacked_data[i] = list(struct.unpack_from('!BBH', packed_data, offset=4+i*8))
-            unpacked_data[i] += list(struct.unpack_from(f'!I', packed_data, offset=8+i*8))
-            print("unpacked_data[i]", unpacked_data[i])
-        return Htime, will_value, unpacked_data
+        
+        if len(packed_data) == 4:
+            return Htime, will_value, []
+        else:
+            ptr = 4
+            unpacked_data = []
+            while ptr < len(packed_data):
+                packed_data.append(list(struct.unpack_from('!BBH', packed_data, offset=ptr)))
+                interface_length = int((packed_data[-1][2]-4)/4)
+                packed_data[-1] += list(struct.unpack_from(f'!I{interface_length}', packed_data, offset=ptr+4))
+                ptr += (4 + interface_length*4)
+    
+            return Htime, will_value, unpacked_data
 
     def encodeLinkCode(self, neigh_type, link_type):
         data = (neigh_type<<2) & 0x0C
@@ -138,11 +144,11 @@ class helloMessage(threading.Thread):
         BBHI : (link_code, reserved, link Message size, neighbor inteface address)
         link Tuple : (l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time)
         '''
+        print(single_packet['message'])
         Htime, will_value, unpacked_data_lst = self.unpackMessage(single_packet['message'])
         print('unpacked_data_lst', unpacked_data_lst)
-        if unpacked_data_lst == []:
+        if len(unpacked_data_lst) == 0:
             if self.parent.link_set.checkExist(source_addr) == False:
-                # need to be checked ASYM_TIME value?
                 print(singletuple for singletuple in self.parent.link_set.tupleList)
                 self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
             
