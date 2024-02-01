@@ -34,7 +34,7 @@ def encode_validTime(emission_interval):
     mantissa = int(((emission_interval / C) - 1) * 16)
     # Combine mantissa and exponent into Htime
     Htime = (mantissa << 4) | exponent
-    print('endcoded : ', Htime)
+    #print('endcoded : ', Htime)
     return Htime
 
 def encodeIPAddr(ip_addr : str):
@@ -71,7 +71,7 @@ class helloMessage(threading.Thread):
         while True:
             if time.time() - self.last_emission_time > HELLO_INTERVAL:
                 self.last_emission_time = time.time()
-                print('hello message emitted')
+                #print('hello message emitted')
                 self.packMessage()
             else:
                 time.sleep(HELLO_INTERVAL/2)
@@ -85,8 +85,10 @@ class helloMessage(threading.Thread):
                                     RESERVED,             # 0, 16bits
                                     encode_validTime(HELLO_INTERVAL),     # Htime 8bits # mentissa needtobecheck
                                     self.willingness)         # willingness default 8bits
-        packet_format = '!BBHI'        
+        packet_format = '!BBH'        
+        #print("process", self.parent.link_set.getTuple())
         for single_tuple in self.parent.link_set.getTuple():
+            #print("process for link set")
             link_code = NOT_NEIGH
             if self.parent.mprSet.checkExist(single_tuple._l_neighbor_iface_addr):
                 link_code = MPR_NEIGH
@@ -97,15 +99,15 @@ class helloMessage(threading.Thread):
             packed_data += struct.pack(packet_format,
                                         link_code,
                                         RESERVED,
-                                        link_message_size,
-                                        encodeIPAddr(single_tuple._l_neighbor_iface_addr)
-                                        )                  
+                                        link_message_size)
+            packed_data +=  encodeIPAddr(single_tuple._l_neighbor_iface_addr)
         packed_packet = self.parent.packet_header_handler.attatchHeader(
             [HELLO_MESSAGE, HELLO_INTERVAL, 2, self.seq_num, packed_data]
             )
         self.seq_num += 1
         asyncio.run(self.parent.sender.broadcastMsg(packed_packet))
-    
+        #print("HELLO MESSAGE", packed_packet)
+        
     def unpackMessage(self, packed_data):
         '''
         HBB : RESERVED, Htime, willingness
@@ -120,9 +122,10 @@ class helloMessage(threading.Thread):
             ptr = 4
             unpacked_data = []
             while ptr < len(packed_data):
-                packed_data.append(list(struct.unpack_from('!BBH', packed_data, offset=ptr)))
-                interface_length = int((packed_data[-1][2]-4)/4)
-                packed_data[-1] += list(struct.unpack_from(f'!I{interface_length}', packed_data, offset=ptr+4))
+                unpacked_data.append(list(struct.unpack_from('!BBH', packed_data, offset=ptr)))
+                interface_length = int((unpacked_data[-1][2]-4)/4)
+                for i in range(interface_length):
+                    unpacked_data[-1] += list(struct.unpack_from(f'!I', packed_data, offset=ptr+4))
                 ptr += (4 + interface_length*4)
     
             return Htime, will_value, unpacked_data
@@ -144,23 +147,28 @@ class helloMessage(threading.Thread):
         BBHI : (link_code, reserved, link Message size, neighbor inteface address)
         link Tuple : (l_local_iface_addr, l_neighbor_iface_addr, l_SYM_time, l_ASYM_time, l_time)
         '''
-        print(single_packet['message'])
+        #print(single_packet['message'])
         Htime, will_value, unpacked_data_lst = self.unpackMessage(single_packet['message'])
-        print('unpacked_data_lst', unpacked_data_lst)
         if len(unpacked_data_lst) == 0:
-            if self.parent.link_set.checkExist(source_addr) == False:
-                print(singletuple for singletuple in self.parent.link_set.tupleList)
-                self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
+            if self.parent.link_set.checkExist(source_addr) == -1:
+                #print(self.parent.link_set.checkExist(source_addr))
+                self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, time.time()+single_packet['vtime'], time.time()+single_packet['vtime'])
+            else:
+                #print("exist")
+                #print(self.parent.link_set.getTuple())
+                pass
             
         for unpacked_data in unpacked_data_lst:
-            print("process for link tuple")
+            #print("process for link tuple")
             link_tuple_exist = self.parent.link_set.checkExist(source_addr)
+            #print("exist?", link_tuple_exist)
             if link_tuple_exist == False:
                 # need to be checked ASYM_TIME value?
-                print(self.parent.link_set.tupleList)
-                self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, None, time.time()+single_packet['vtime'])
+                #print(self.parent.link_set.tupleList)
+                self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, time.time()+single_packet['vtime'], time.time()+single_packet['vtime'])
             else:
                 self.parent.link_set.updateTuple(link_tuple_exist, None, None, None, time.time() + single_packet['vtime'], None)
+                #print("update")
                 if self.ip_address == unpacked_data[4]:
                     if unpacked_data[1] == LOST_LINK:
                         self.parent.link_set.updateTuple(link_tuple_exist, None, None, time.time() - 1, None, None)
@@ -184,7 +192,8 @@ class helloMessage(threading.Thread):
                 elif unpacked_data[0] == NOT_NEIGH:
                     self.parent.two_hop_neighbor_set.addTuple(source_addr, unpacked_data[4])
                 else:
-                    print("undefined type")
+                    #print("undefined type")
+                    pass
                 
             # process for MPR Set - calculated with MPR
             # MPR set has to be recalculated when change occurs in SYM_NEIGH or 
@@ -255,7 +264,7 @@ class TCMessage(threading.Thread):
         while True:
             if time.time() - self.last_msg_trans_time > TC_INTERVAL:
                 self.last_msg_trans_time = time.time()
-                print('TCMessage emitted')
+                #print('TCMessage emitted')
                 self.generateMessage()
             else:
                 time.sleep(TC_INTERVAL/2)
@@ -465,7 +474,7 @@ class MoveMessage(threading.Thread):
             unpacked_data = struct.unpack_from(f'!I{message_size-8}', binary_data, 8)
             node_data = unpacked_data
         else:
-            print("undefined message")
+            #print("undefined message")
             return
                 
         return node_data, message_type, sent_interface_addr

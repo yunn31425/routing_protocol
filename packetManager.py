@@ -24,12 +24,13 @@ class Sender:
         try:
             self.interface_name = sys.argv[1]
         except IndexError:
-            print("interface name must be entered... (e.g wlp1s0)")
+            #print("interface name must be entered... (e.g wlp1s0)")
             sys.exit()
   
         # check if network mode is ad-hoc not managed
         if (subprocess.run('iwconfig | grep Mode', shell=True, capture_output=True, text=True).stdout).split(' ')[10] == "Mode:Managed":
-            print("change mode into ad-hoc first")
+            #print("change mode into ad-hoc first")
+            pass
             
         try:
             SendSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,14 +45,14 @@ class Sender:
 
         except OSError as e:
             if e.errno == 19:
-                print("wrong interface name")
+                #print("wrong interface name")
                 self.logger.error(f'wrong interface name :{self.interface_name}')
                 listenSocket.close()
                 SendSocket.close()
                 sys.exit()
                 
             elif e.errno == 98:
-                print("port is already in use")
+                #print("port is already in use")
                 self.logger.error("port is already in use")
                 listenSocket.close()
                 SendSocket.close()
@@ -76,7 +77,7 @@ class Sender:
                 sock.sendto(packed_message, (BROADCAST_ADDR, 14567))
                 self.logger.info('broadcast' + str(packed_message))
         except OSError as e:
-            print(e.errno)
+            #print(e.errno)
             self.logger.error(f'broadcast failed : {e.errno}')
             
     async def SendToMPR(self, packed_message):
@@ -129,7 +130,7 @@ class PacketForwarder:
         
     def enqueuing(self, packet):
         if Raw in packet:
-            #print('packet enqueued', packet[Raw].load)
+            ##print('packet enqueued', packet[Raw].load)
             self.logger.info('packet enqueued {packet[Raw].load}')
             if TCP in packet:        
                 self.packet_queue.put({
@@ -158,15 +159,15 @@ class PacketForwarder:
         if self.packet_queue.qsize() > MAX_QUEUE_LENGTH:
             self.olsr_manager.hello_message_handler.willingness = WILL_NEVER
             self.logger.info("packet queue overflow, willingness -> WILL_NEVER")
-            print("packet queue overflow, willingness -> WILL_NEVER")
+            #print("packet queue overflow, willingness -> WILL_NEVER")
         
         if self.olsr_manager.hello_message_handler.willingness == WILL_NEVER:
             if self.packet_queue.qsize() < MAX_QUEUE_LENGTH/1.2:
                 self.olsr_manager.hello_message_handler.willingness == WILL_DEFAULT
                 self.logger.info("packet queue overflow solved, willingness -> WILL_DEFAULT")
-                print("packet queue overflow solved, willingness -> WILL_DEFAULT")
+                #print("packet queue overflow solved, willingness -> WILL_DEFAULT")
          
-        ##print(packet.summary(), 'dequeing', self.packet_queue.qsize())
+        ###print(packet.summary(), 'dequeing', self.packet_queue.qsize())
             
     async def async_sniff(self):
         sniff(iface=self.interface_name, store=False, prn=self.enqueuing)
@@ -184,24 +185,24 @@ class PacketForwarder:
         try:            
             while True:
                 if not self.packet_queue.empty():
-                    print("packet dequeued")
+                    ##print("packet dequeued")
                     single_packet = self.packet_queue.get()
-                    print(single_packet['src_IP'], '>>' ,single_packet['dst_IP'], 'dequeing')
+                    ##print(single_packet['src_IP'], '>>' ,single_packet['dst_IP'], 'dequeing')
                     
-                    if single_packet['src_IP'] == self.ip_address:
-                        print("emited by this node")
+                    if single_packet['src_IP'] == self.ip_address and single_packet['src_port'] != 14567:
+                        #print("emited by this node")
                         self.default_packet_processing(single_packet)
                         # 라우팅 테이블에 따라 라우팅
                     elif single_packet['dst_IP'] in [self.ip_address,BROADCAST_ADDR]:
-                        print("into this node")
+                        #print("into this node", end="/")
                         if single_packet['dst_port'] == 14567:
-                            print("olsr message")
+                            #print("olsr message")
                             self.olsr_manager.packet_processing(single_packet)
                         else:
-                            print("default")
+                            #print("default")
                             self.default_packet_processing(single_packet)
         except KeyboardInterrupt:
-            print("keyboard interrupt")
+            #print("keyboard interrupt")
             self.logger.info('keyboard interrupt')
             sys.exit()   
     
@@ -217,10 +218,12 @@ class PacketForwarder:
     
     def default_packet_processing(self, single_packet):
         next_addr = self.olsr_manager.route_table.getNextAddr(single_packet['dst_IP'])
-        if next_addr:
-            self.sender.sendMsg(single_packet['payload'], next_addr)
+        if next_addr == -1:
+            pass
+            #self.olsr_manager.unreach_queue.putQueue(single_packet['dst_IP'], single_packet['payload'])
         else:
-            self.olsr_manager.unreach_queue.putQueue(single_packet['dst_IP'], single_packet['payload'])
+            self.sender.sendMsg(single_packet['payload'], next_addr)
+            
 class PacketHeader:
     '''
     packet header for olsr protocol
@@ -244,13 +247,13 @@ class PacketHeader:
     
     def attatchHeader(self, message_contents):
         packet_contents = b''
-        print(message_contents)
+        #print(message_contents)
         if len(message_contents[4]) == 0:
             return
         
         message_size = len(message_contents[4])
-        print(message_contents[4])
-        print('message_size', message_size)
+        #print(message_contents[4])
+        #print('message_size', message_size)
         packet_length = message_size + 4*4
         packet_contents = struct.pack('!HHBBH', 
                                         packet_length,
@@ -265,10 +268,10 @@ class PacketHeader:
                                         message_contents[3])         # message_seq_num
         packet_contents += message_contents[4]
         
-        print('packet_length', packet_length, message_size)
+        #print('packet_length', packet_length, message_size)
         self.packet_seqence_num += 1
-        print('packet_contents', packet_contents)
-        print('message_contents[4]', message_contents[4])
+        #print('packet_contents', packet_contents)
+        #print('message_contents[4]', message_contents[4])
         return packet_contents
             
     def detatchHeader(self, binary_packet):
@@ -276,15 +279,15 @@ class PacketHeader:
         packet_seq_num = struct.unpack_from('!H', binary_packet, 2)[0]
         message_contents = []
         message_offset = 4
-        print(binary_packet)
-        print('packet_length', packet_length)
+        #print(binary_packet)
+        #print('packet_length', packet_length)
         if packet_length == 4:
             return 
         while packet_length - message_offset > 0:
             message_header = struct.unpack_from('!BBHIBBH', binary_packet, offset=message_offset)
             message_size = message_header[2]
             message = binary_packet[message_offset + MSG_HEADER_SIZE : message_offset + MSG_HEADER_SIZE + message_size]
-            print(message_offset, MSG_HEADER_SIZE, message_size)
+            #print(message_offset, MSG_HEADER_SIZE, message_size)
             #message = struct.unpack_from(f'I{message_size}', binary_packet, message_offset + MSG_HEADER_SIZE)
             message_contents.append({
                                         'message_type'      : message_header[0],
@@ -334,11 +337,11 @@ class OLSRManager:
         self.move_message_handler = MoveMessage(self)
         self.tc_message_handler = TCMessage(self) 
         
-        self.unreach_queue = UnreachQueue(self)
+        # self.unreach_queue = UnreachQueue(self)
             
         self.packet_forwarder = PacketForwarder(self)
         
-        print("init complete")
+        #print("init complete")
         self.logger.info('init complete')
         
         self.tc_message_handler.start()
@@ -346,25 +349,25 @@ class OLSRManager:
         
     def packet_processing(self, packet):
         if len(packet['payload']) == PACKET_HEADER_SIZE + MSG_HEADER_SIZE:
-            print("header only")
+            #print("header only")
             return
-        print("payload", packet['payload'])
+        #print("payload", packet['payload'])
         seq_num, message_contents = self.packet_header_handler.detatchHeader(packet['payload'])
         source_addr = packet['src_IP']
         dest_addr = packet['dst_IP']
-        print(message_contents)
+        #print(message_contents)
         for single_msg in message_contents:
             if single_msg['ttl'] < 2: # need to be checked
-                print("no retransmit")
+                #print("no retransmit")
                 continue 
             
             #message processing
             if self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num']) is not False:
-                print("already processed message")
+                #print("already processed message")
                 pass # already processed message
             # process message 
             elif single_msg['message_type'] == HELLO_MESSAGE:
-                print("hello message received from " + source_addr)
+                #print("hello message received from " + source_addr)
                 self.logger.debug('hello message from : ' + source_addr)
                 self.hello_message_handler.processMessage(single_msg, source_addr)
             elif single_msg['message_type'] == TC_MESSAGE:
@@ -376,7 +379,7 @@ class OLSRManager:
             elif single_msg['message_type'] == MOVE_MESSAGE:
                 self.move_message_handler.processMessage(single_msg, source_addr)
             else:
-                print('unidenfitied message type')
+                #print('unidenfitied message type')
                 self.logger.warning('unidenfitied message type : ', single_msg['message_type'])
                 
             # message  forwarding # need to be check
@@ -416,10 +419,10 @@ class OLSRManager:
         ptr = self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num'])
         
         if ptr != -1:
-            print("exist", ptr)
+            #print("exist", ptr)
             self.duplicated_set.updateTuple(ptr, time.time() + DUP_HOLD_TIME, dest_addr, will_retransmit)
         else:
-            print("non exist", ptr)
+            #print("non exist", ptr)
             self.duplicated_set.addTuple(single_msg['originator_add'], single_msg['message_seq_num'], will_retransmit,\
                 dest_addr, time.time() + DUP_HOLD_TIME)
             
