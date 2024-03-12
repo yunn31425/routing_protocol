@@ -18,18 +18,17 @@ class Sender:
     '''
     send message and packets
     '''
-    def __init__(self, parent) -> None:
+    def __init__(self, parent, arguments) -> None:
         self.parent = parent
         self.logger = parent.logger
-        try:
-            self.interface_name = sys.argv[1]
-        except IndexError:
-            #print("interface name must be entered... (e.g wlp1s0)")
-            sys.exit()
-  
+        
+        if arguments.adhoc == None:
+            print("interface name must be entered... (e.g wlp1s0)")
+            sys.exit()        
+         
         # check if network mode is ad-hoc not managed
         if (subprocess.run('iwconfig | grep Mode', shell=True, capture_output=True, text=True).stdout).split(' ')[10] == "Mode:Managed":
-            #print("change mode into ad-hoc first")
+            print("change mode into ad-hoc first")
             pass
             
         try:
@@ -309,10 +308,10 @@ class OLSRManager:
     send and receive olsr message to maintain route
     and make route table
     '''
-    def __init__(self) -> None:
+    def __init__(self, arguments) -> None:
         
         self.logger = OlSRLogger()
-        self.sender = Sender(self)
+        self.sender = Sender(self, arguments)
         self.ip_address = self.sender.getIPAddr()
         
         self.packet_header_handler = PacketHeader(self.ip_address)
@@ -384,7 +383,7 @@ class OLSRManager:
                 
             # message  forwarding # need to be check
             idx = self.duplicated_set.checkExist_addr_seq(single_msg['originator_add'], single_msg['message_seq_num'])
-            if (idx is not False) and (self.ip_address in self.duplicated_set.getIfaceLst(idx)):
+            if (idx != -1) and (self.ip_address in self.duplicated_set.getIfaceLst(idx)):
                 pass # message which has been forwarded already
             elif single_msg['message_type'] == HELLO_MESSAGE: 
                 self.hello_message_handler.forwardMessage(single_msg)

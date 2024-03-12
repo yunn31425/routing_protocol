@@ -162,7 +162,7 @@ class helloMessage(threading.Thread):
             #print("process for link tuple")
             link_tuple_exist = self.parent.link_set.checkExist(source_addr)
             #print("exist?", link_tuple_exist)
-            if link_tuple_exist == False:
+            if link_tuple_exist == -1:
                 # need to be checked ASYM_TIME value?
                 #print(self.parent.link_set.tupleList)
                 self.parent.link_set.addTuple(self.ip_address, source_addr, time.time()-1, time.time()+single_packet['vtime'], time.time()+single_packet['vtime'])

@@ -354,7 +354,7 @@ class DuplicatedSet:
                 else:
                     return i
         
-        return False
+        return -1
     
     def checkExist_iface(self, ip_address, check_retransmit=False):
         for i, single_tuple in enumerate(self.dTupleList):
@@ -436,21 +436,21 @@ class RouteTable:
             if route['R_dest_addr'] == addr:
                 return route
             
-        return False
+        return -1
         
     def checkExistDest(self, addr):
         for route in self.route_table:
             if route['R_dest_addr'] == addr:
                 return route['R_dist']
             
-        return False
+        return -1
     
     def checkExistNext(self, addr):
         for route in self.route_table:
             if route['R_dest_addr'] == addr:
                 return route['R_next_addr']
             
-        return False
+        return -1
     
     def getDestExcept(self, ip_addr):
         bridge_addr = []
